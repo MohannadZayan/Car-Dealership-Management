@@ -82,3 +82,41 @@ CMakeLists.txt.user*
 .uic/
 /build*/
 /.qtcreator/
+<<<<<<< HEAD
+=======
+
+# Build directories
+build/
+build-*/
+
+# Qt Creator
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.user
+*.autosave
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# Qt generated files
+moc_*
+qrc_*
+ui_*
+*.qmlc
+*.jsc
+
+# VS Code
+.vscode/
+
+# Database (optional - remove this line if you want to commit sample data)
+dealership.db
+
+# Operating system files
+.DS_Store
+Thumbs.db
+>>>>>>> b9c7237 (Initial project setup and car domain model implementation)
