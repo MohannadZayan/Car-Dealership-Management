@@ -3,6 +3,19 @@
 
 #include <QString>
 
+struct CarFilterCriteria;
+
+// ? Represents the body type of a car.
+enum class VehicleBodyType {
+    Sedan,
+    SUV,
+    Coupe,
+    Hatchback,
+    Convertible, 
+    Pickup,
+    Wagon, 
+    Van
+};
 // ? Represents the current availability status of a car.
 enum class CarStatus {
     Available,
@@ -38,6 +51,7 @@ private:
     int m_horsepower;
 
     TransmissionType m_transmission;
+    VehicleBodyType m_bodyType;
 
     bool m_isNew;
 
@@ -52,23 +66,6 @@ public:
     Car();
 
     Car(
-        const QString& make,
-        const QString& model,
-        int year,
-        double price,
-        int mileage,
-        const QString& color,
-        const QString& engineName,
-        int horsepower,
-        TransmissionType transmission,
-        bool isNew,
-        const QString& licensePlate,
-        const QString& vin,
-        CarStatus status
-    );
-
-    //* Used when constructing a car object from a database record.
-Car(int id,
     const QString& make,
     const QString& model,
     int year,
@@ -78,10 +75,28 @@ Car(int id,
     const QString& engineName,
     int horsepower,
     TransmissionType transmission,
+    VehicleBodyType bodyType,
+    bool isNew
+    );
+
+    //* Used when constructing a car object from a database record.
+Car(
+    int id,
+    const QString& make,
+    const QString& model,
+    int year,
+    double price,
+    int mileage,
+    const QString& color,
+    const QString& engineName,
+    int horsepower,
+    TransmissionType transmission,
+    VehicleBodyType bodyType,
     bool isNew,
     const QString& licensePlate,
     const QString& vin,
-    CarStatus status);
+    CarStatus status
+);
 
     ~Car() = default;
 
@@ -96,10 +111,14 @@ Car(int id,
     const QString& engineName() const;
     int horsepower() const;
     TransmissionType transmission() const;
+    VehicleBodyType bodyType() const;
     bool isNew() const;
     const QString& licensePlate() const;
     const QString& vin() const;
     CarStatus status() const;
+
+    // * Filtering
+    bool matches(const CarFilterCriteria& criteria) const; //? Returns true if this car satisfies every field set in criteria.
 
     // * Setters
     bool setPrice(double price);

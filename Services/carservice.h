@@ -2,6 +2,7 @@
 #define CARSERVICE_H
 #include <QList>
 #include "Models/car.h"
+#include "Models/carfiltercriteria.h"
 #include "Database/databasemanager.h"
 
 class CarService
@@ -27,6 +28,8 @@ bool loadCars(); //? This method loads all cars from the database into the inven
 //* Retrieval
 const QList<Car>& cars() const; //? This method returns a const reference to the list of cars in the inventory.
 Car* findCarById(int id); //? This method returns a pointer to the car with the specified id, or nullptr if no car with the specified id exists.
+QList<Car> carsByBodyType(VehicleBodyType bodyType) const; //? This method returns the cars in the inventory that match the specified body type.
+QList<Car> filterCars(const CarFilterCriteria& criteria) const; //? This method returns the cars in the inventory that match every field set in criteria.
 };
 
 #endif // CARSERVICE_H
