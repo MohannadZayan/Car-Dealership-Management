@@ -179,7 +179,7 @@ bool DatabaseManager::createEmployeesTable()
             first_name TEXT NOT NULL,
             last_name TEXT NOT NULL,
 
-            role TEXT NOT NULL,
+            role INTEGER NOT NULL,
 
             salary REAL NOT NULL CHECK(salary >= 0),
 
