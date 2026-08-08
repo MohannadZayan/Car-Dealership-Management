@@ -32,6 +32,7 @@ qt_add_qml_module(appCar_Dealership_Management
 
         Models/car.h
         Models/car.cpp
+        Models/carfiltercriteria.h
         Models/customer.h
         Models/customer.cpp
         Models/employee.h

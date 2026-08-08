@@ -51,7 +51,12 @@ bool DatabaseManager::disconnectDatabase() {
     m_database.close();
     qDebug() << "Database connection closed!";
     return true;
-    
+
+}
+
+bool DatabaseManager::isConnected() const
+{
+    return m_database.isOpen();
 }
 
 bool DatabaseManager::executeQuery(QSqlQuery& query)
@@ -117,6 +122,7 @@ bool DatabaseManager::createCarsTable()
             mileage INTEGER NOT NULL CHECK(mileage >= 0),
 
             color TEXT NOT NULL,
+            body_type INTEGER NOT NULL,
 
             engine_name TEXT,
             horsepower INTEGER CHECK(horsepower >= 0),

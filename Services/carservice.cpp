@@ -28,6 +28,36 @@ Car* CarService::findCarById(int id)
     return nullptr;
 }
 
+QList<Car> CarService::carsByBodyType(VehicleBodyType bodyType) const
+{
+    QList<Car> result;
+
+    for (const Car& car : m_cars)
+    {
+        if (car.bodyType() == bodyType)
+        {
+            result.append(car);
+        }
+    }
+
+    return result;
+}
+
+QList<Car> CarService::filterCars(const CarFilterCriteria& criteria) const
+{
+    QList<Car> result;
+
+    for (const Car& car : m_cars)
+    {
+        if (car.matches(criteria))
+        {
+            result.append(car);
+        }
+    }
+
+    return result;
+}
+
 bool CarService::addCar(const Car& car)
 {
     if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
@@ -49,6 +79,7 @@ bool CarService::addCar(const Car& car)
                 price,
                 mileage,
                 color,
+                body_type,
                 engine_name,
                 horsepower,
                 transmission,
@@ -59,7 +90,7 @@ bool CarService::addCar(const Car& car)
             )
             VALUES
             (
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
             )
         )");
 
@@ -69,6 +100,7 @@ bool CarService::addCar(const Car& car)
         query.addBindValue(car.price());
         query.addBindValue(car.mileage());
         query.addBindValue(car.color());
+        query.addBindValue(static_cast<int>(car.bodyType()));
         query.addBindValue(car.engineName());
         query.addBindValue(car.horsepower());
         query.addBindValue(static_cast<int>(car.transmission()));
@@ -113,6 +145,7 @@ bool CarService::loadCars()
                 price,
                 mileage,
                 color,
+                body_type,
                 engine_name,
                 horsepower,
                 transmission,
@@ -143,6 +176,7 @@ bool CarService::loadCars()
                 query.value("engine_name").toString(),
                 query.value("horsepower").toInt(),
                 static_cast<TransmissionType>(query.value("transmission").toInt()),
+                static_cast<VehicleBodyType>(query.value("body_type").toInt()),
                 query.value("is_new").toBool(),
                 query.value("license_plate").toString(),
                 query.value("vin").toString(),
@@ -182,6 +216,7 @@ bool CarService::updateCar(const Car& updatedCar)
                 price = ?,
                 mileage = ?,
                 color = ?,
+                body_type = ?,
                 engine_name = ?,
                 horsepower = ?,
                 transmission = ?,
@@ -198,6 +233,7 @@ bool CarService::updateCar(const Car& updatedCar)
         query.addBindValue(updatedCar.price());
         query.addBindValue(updatedCar.mileage());
         query.addBindValue(updatedCar.color());
+        query.addBindValue(static_cast<int>(updatedCar.bodyType()));
         query.addBindValue(updatedCar.engineName());
         query.addBindValue(updatedCar.horsepower());
         query.addBindValue(static_cast<int>(updatedCar.transmission()));
