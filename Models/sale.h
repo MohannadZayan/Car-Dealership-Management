@@ -3,6 +3,8 @@
 
 #include <QDate>
 
+struct SaleFilterCriteria;
+
 //* Represents a completed vehicle sale in the dealership.
 class Sale
 {
@@ -52,6 +54,9 @@ public:
     double salePrice() const;
 
     const QDate& saleDate() const;
+
+    //* Filtering
+    bool matches(const SaleFilterCriteria& criteria) const; //? Returns true if this sale satisfies every field set in criteria.
 
     //* Setters
     //! IDs are immutable after creation.

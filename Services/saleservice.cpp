@@ -31,6 +31,21 @@ Sale* SaleService::findSaleById(int id)
     return nullptr;
 }
 
+QList<Sale> SaleService::filterSales(const SaleFilterCriteria& criteria) const
+{
+    QList<Sale> result;
+
+    for (const Sale& sale : m_sales)
+    {
+        if (sale.matches(criteria))
+        {
+            result.append(sale);
+        }
+    }
+
+    return result;
+}
+
 bool SaleService::addSale(const Sale& sale)
 {
     if (m_databaseManager == nullptr || !m_databaseManager->isConnected())

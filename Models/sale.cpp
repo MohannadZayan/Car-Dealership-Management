@@ -1,4 +1,5 @@
 #include "sale.h"
+#include "salefiltercriteria.h"
 
 #include <stdexcept>
 
@@ -95,6 +96,33 @@ double Sale::salePrice() const
 const QDate& Sale::saleDate() const
 {
     return m_saleDate;
+}
+
+// * Filtering
+bool Sale::matches(const SaleFilterCriteria& criteria) const
+{
+    if (criteria.carId && m_carId != *criteria.carId)
+        return false;
+
+    if (criteria.customerId && m_customerId != *criteria.customerId)
+        return false;
+
+    if (criteria.employeeId && m_employeeId != *criteria.employeeId)
+        return false;
+
+    if (criteria.minSalePrice && m_salePrice < *criteria.minSalePrice)
+        return false;
+
+    if (criteria.maxSalePrice && m_salePrice > *criteria.maxSalePrice)
+        return false;
+
+    if (criteria.fromDate && m_saleDate < *criteria.fromDate)
+        return false;
+
+    if (criteria.toDate && m_saleDate > *criteria.toDate)
+        return false;
+
+    return true;
 }
 
 // * Setters
