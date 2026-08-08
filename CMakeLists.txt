@@ -4,7 +4,7 @@ project(Car_Dealership_Management VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql Network)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql Network PrintSupport)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
@@ -78,6 +78,15 @@ target_link_libraries(appCar_Dealership_Management
         Qt6::Quick
         Qt6::Sql
         Qt6::Network
+        Qt6::PrintSupport
+)
+
+# QML's automatic type registration includes AppController's header as a bare
+# filename (#include <appcontroller.h>), which only resolves if its directory
+# is directly on the include path — the project root alone isn't enough.
+target_include_directories(appCar_Dealership_Management
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/Managers
 )
 
 install(TARGETS appCar_Dealership_Management
