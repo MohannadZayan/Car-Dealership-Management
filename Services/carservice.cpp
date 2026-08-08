@@ -6,56 +6,28 @@
 #include <exception>
 
 CarService::CarService(DatabaseManager* databaseManager)
-    : m_databaseManager(databaseManager)
+    : BaseService<Car>(databaseManager)
 {
 }
 
 const QList<Car>& CarService::cars() const
 {
-    return m_cars;
+    return entities();
 }
 
 Car* CarService::findCarById(int id)
 {
-    for (Car& car : m_cars)
-    {
-        if (car.id() == id)
-        {
-            return &car;
-        }
-    }
-
-    return nullptr;
+    return find([id](const Car& car) { return car.id() == id; });
 }
 
 QList<Car> CarService::carsByBodyType(VehicleBodyType bodyType) const
 {
-    QList<Car> result;
-
-    for (const Car& car : m_cars)
-    {
-        if (car.bodyType() == bodyType)
-        {
-            result.append(car);
-        }
-    }
-
-    return result;
+    return filter([bodyType](const Car& car) { return car.bodyType() == bodyType; });
 }
 
 QList<Car> CarService::filterCars(const CarFilterCriteria& criteria) const
 {
-    QList<Car> result;
-
-    for (const Car& car : m_cars)
-    {
-        if (car.matches(criteria))
-        {
-            result.append(car);
-        }
-    }
-
-    return result;
+    return filter([&criteria](const Car& car) { return car.matches(criteria); });
 }
 
 bool CarService::addCar(const Car& car)
@@ -161,7 +133,7 @@ bool CarService::loadCars()
             return false;
         }
 
-        m_cars.clear();
+        m_entities.clear();
 
         while (query.next())
         {
@@ -183,7 +155,7 @@ bool CarService::loadCars()
                 static_cast<CarStatus>(query.value("status").toInt())
             );
 
-            m_cars.append(car);
+            m_entities.append(car);
         }
 
         return true;

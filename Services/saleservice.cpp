@@ -8,42 +8,24 @@
 #include <exception>
 
 SaleService::SaleService(DatabaseManager* databaseManager)
-    : m_databaseManager(databaseManager)
+    : BaseService<Sale>(databaseManager)
 {
 
 }
 
 const QList<Sale>& SaleService::sales() const
 {
-    return m_sales;
+    return entities();
 }
 
 Sale* SaleService::findSaleById(int id)
 {
-    for (Sale& sale : m_sales)
-    {
-        if (sale.id() == id)
-        {
-            return &sale;
-        }
-    }
-
-    return nullptr;
+    return find([id](const Sale& sale) { return sale.id() == id; });
 }
 
 QList<Sale> SaleService::filterSales(const SaleFilterCriteria& criteria) const
 {
-    QList<Sale> result;
-
-    for (const Sale& sale : m_sales)
-    {
-        if (sale.matches(criteria))
-        {
-            result.append(sale);
-        }
-    }
-
-    return result;
+    return filter([&criteria](const Sale& sale) { return sale.matches(criteria); });
 }
 
 bool SaleService::addSale(const Sale& sale)
@@ -121,7 +103,7 @@ bool SaleService::loadSales()
             return false;
         }
 
-        m_sales.clear();
+        m_entities.clear();
 
         while (query.next())
         {
@@ -137,7 +119,7 @@ bool SaleService::loadSales()
                 )
             );
 
-            m_sales.append(sale);
+            m_entities.append(sale);
         }
 
         return true;

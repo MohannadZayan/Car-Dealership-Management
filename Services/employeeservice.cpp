@@ -8,42 +8,24 @@
 #include <exception>
 
 EmployeeService::EmployeeService(DatabaseManager* databaseManager)
-    : m_databaseManager(databaseManager)
+    : BaseService<Employee>(databaseManager)
 {
 
 }
 
 const QList<Employee>& EmployeeService::employees() const
 {
-    return m_employees;
+    return entities();
 }
 
 Employee* EmployeeService::findEmployeeById(int id)
 {
-    for (Employee& employee : m_employees)
-    {
-        if (employee.id() == id)
-        {
-            return &employee;
-        }
-    }
-
-    return nullptr;
+    return find([id](const Employee& employee) { return employee.id() == id; });
 }
 
 QList<Employee> EmployeeService::filterEmployees(const EmployeeFilterCriteria& criteria) const
 {
-    QList<Employee> result;
-
-    for (const Employee& employee : m_employees)
-    {
-        if (employee.matches(criteria))
-        {
-            result.append(employee);
-        }
-    }
-
-    return result;
+    return filter([&criteria](const Employee& employee) { return employee.matches(criteria); });
 }
 
 bool EmployeeService::addEmployee(const Employee& employee)
@@ -124,7 +106,7 @@ bool EmployeeService::loadEmployees()
             return false;
         }
 
-        m_employees.clear();
+        m_entities.clear();
 
         while (query.next())
         {
@@ -138,7 +120,7 @@ bool EmployeeService::loadEmployees()
                 query.value("email").toString()
             );
 
-            m_employees.append(employee);
+            m_entities.append(employee);
         }
 
         return true;

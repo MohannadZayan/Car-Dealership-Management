@@ -6,13 +6,10 @@
 #include "Models/sale.h"
 #include "Models/salefiltercriteria.h"
 #include "Database/databasemanager.h"
+#include "Services/baseservice.h"
 
-class SaleService
+class SaleService : public BaseService<Sale>
 {
-private:
-    QList<Sale> m_sales;
-    DatabaseManager* m_databaseManager;
-
 public:
     explicit SaleService(DatabaseManager* databaseManager);
     ~SaleService() = default;

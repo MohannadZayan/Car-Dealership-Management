@@ -4,14 +4,10 @@
 #include "Models/car.h"
 #include "Models/carfiltercriteria.h"
 #include "Database/databasemanager.h"
+#include "Services/baseservice.h"
 
-class CarService
+class CarService : public BaseService<Car>
 {
-
-    private: 
-    QList<Car> m_cars;
-    DatabaseManager* m_databaseManager;
-
 public:
     explicit CarService(DatabaseManager* databaseManager); //? Explicit for constructor to prevent implicit conversions.
     ~CarService() = default;

@@ -6,13 +6,10 @@
 #include "Models/employee.h"
 #include "Models/employeefiltercriteria.h"
 #include "Database/databasemanager.h"
+#include "Services/baseservice.h"
 
-class EmployeeService
+class EmployeeService : public BaseService<Employee>
 {
-private:
-    QList<Employee> m_employees;
-    DatabaseManager* m_databaseManager;
-
 public:
     explicit EmployeeService(DatabaseManager* databaseManager);
     ~EmployeeService() = default;

@@ -5,13 +5,10 @@
 
 #include "Models/customer.h"
 #include "Database/databasemanager.h"
+#include "Services/baseservice.h"
 
-class CustomerService
+class CustomerService : public BaseService<Customer>
 {
-private:
-    QList<Customer> m_customers;
-    DatabaseManager* m_databaseManager;
-
 public:
     explicit CustomerService(DatabaseManager* databaseManager);
     ~CustomerService() = default;

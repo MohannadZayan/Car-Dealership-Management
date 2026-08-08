@@ -5,13 +5,10 @@
 
 #include "Models/Invoice.h"
 #include "Database/databasemanager.h"
+#include "Services/baseservice.h"
 
-class InvoiceService
+class InvoiceService : public BaseService<Invoice>
 {
-private:
-    QList<Invoice> m_invoices;
-    DatabaseManager* m_databaseManager;
-
 public:
     explicit InvoiceService(DatabaseManager* databaseManager);
     ~InvoiceService() = default;

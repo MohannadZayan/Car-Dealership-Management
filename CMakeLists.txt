@@ -44,6 +44,7 @@ qt_add_qml_module(appCar_Dealership_Management
         Models/Invoice.h
         Models/Invoice.cpp
 
+        Services/baseservice.h
         Services/carservice.h
         Services/carservice.cpp
         Services/customerservice.h

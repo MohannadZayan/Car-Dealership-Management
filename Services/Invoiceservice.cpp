@@ -8,27 +8,19 @@
 #include <exception>
 
 InvoiceService::InvoiceService(DatabaseManager* databaseManager)
-    : m_databaseManager(databaseManager)
+    : BaseService<Invoice>(databaseManager)
 {
 
 }
 
 const QList<Invoice>& InvoiceService::invoices() const
 {
-    return m_invoices;
+    return entities();
 }
 
 Invoice* InvoiceService::findInvoiceById(int id)
 {
-    for (Invoice& invoice : m_invoices)
-    {
-        if (invoice.id() == id)
-        {
-            return &invoice;
-        }
-    }
-
-    return nullptr;
+    return find([id](const Invoice& invoice) { return invoice.id() == id; });
 }
 
 bool InvoiceService::addInvoice(const Invoice& invoice)
@@ -112,7 +104,7 @@ bool InvoiceService::loadInvoices()
             return false;
         }
 
-        m_invoices.clear();
+        m_entities.clear();
 
         while (query.next())
         {
@@ -132,7 +124,7 @@ bool InvoiceService::loadInvoices()
                 )
             );
 
-            m_invoices.append(invoice);
+            m_entities.append(invoice);
         }
 
         return true;

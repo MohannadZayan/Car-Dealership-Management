@@ -5,53 +5,34 @@
 #include <QVariant>
 #include <exception>
 
-CustomerService::CustomerService(DatabaseManager* databaseManager) : m_databaseManager (databaseManager) 
+CustomerService::CustomerService(DatabaseManager* databaseManager)
+    : BaseService<Customer>(databaseManager)
 {
 
 }
 
 const QList<Customer>& CustomerService::customers() const
 {
-    return m_customers;
+    return entities();
 }
 
 Customer* CustomerService::findCustomerById(int id)
 {
-    for (Customer& customer : m_customers)
-    {
-        if (customer.id() == id)
-        {
-            return &customer;
-        }
-    }
-
-    return nullptr;
+    return find([id](const Customer& customer) { return customer.id() == id; });
 }
 
 Customer* CustomerService::findCustomerByPhone(const QString& phone)
 {
-    for (Customer& customer : m_customers)
-    {
-        if (customer.phone().compare(phone, Qt::CaseInsensitive) == 0)
-        {
-            return &customer;
-        }
-    }
-
-    return nullptr;
+    return find([&phone](const Customer& customer) {
+        return customer.phone().compare(phone, Qt::CaseInsensitive) == 0;
+    });
 }
 
 Customer* CustomerService::findCustomerByEmail(const QString& email)
 {
-    for (Customer& customer : m_customers)
-    {
-        if (customer.email().compare(email, Qt::CaseInsensitive) == 0)
-        {
-            return &customer;
-        }
-    }
-
-    return nullptr;
+    return find([&email](const Customer& customer) {
+        return customer.email().compare(email, Qt::CaseInsensitive) == 0;
+    });
 }
 
 bool CustomerService::addCustomer(const Customer& customer)
@@ -130,7 +111,7 @@ bool CustomerService::loadCustomers()
             return false;
         }
 
-        m_customers.clear();
+        m_entities.clear();
 
         while (query.next())
         {
@@ -143,7 +124,7 @@ bool CustomerService::loadCustomers()
                 query.value("address").toString()
             );
 
-            m_customers.append(customer);
+            m_entities.append(customer);
         }
 
         return true;
