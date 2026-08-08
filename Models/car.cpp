@@ -22,27 +22,26 @@ Car::Car()
 }
 
 // *Parameterized constructor
-Car::Car( const QString& make,
-          const QString& model,
-          int year,
-          double price,
-          int mileage,
-          const QString& color,
-          const QString& engineName,
-          int horsepower,
-          TransmissionType transmission,
-          bool isNew,
-          const QString& licensePlate,
-          const QString& vin,
-          CarStatus status
-)
-
-    : m_id(0),
+Car::Car(int id,
+         const QString& make,
+         const QString& model,
+         int year,
+         double price,
+         int mileage,
+         const QString& color,
+         const QString& engineName,
+         int horsepower,
+         TransmissionType transmission,
+         bool isNew,
+         const QString& licensePlate,
+         const QString& vin,
+         CarStatus status)
+    : m_id(id),
       m_make(make),
       m_model(model),
       m_year(year),
       m_price(price),
-      m_mileage(mileage), 
+      m_mileage(mileage),
       m_color(color),
       m_engineName(engineName),
       m_horsepower(horsepower),
@@ -52,29 +51,23 @@ Car::Car( const QString& make,
       m_vin(vin),
       m_status(status)
 {
-    // ! First layer of price validation
-    if (price < 0.0) {
+    if (price < 0.0)
         throw std::invalid_argument("Price cannot be negative");
-    }
-    // ! First layer of mileage validation
-    if (mileage < 0) {
+
+    if (mileage < 0)
         throw std::invalid_argument("Mileage cannot be negative");
-    }
-    //! Year validation.
-    if (year < 1886 || year > 2100) {
+
+    if (year < 1886 || year > 2100)
         throw std::invalid_argument("Year is out of valid range");
-    }
-    //! Make validation
-    if (make.trimmed().isEmpty()) {
+
+    if (make.trimmed().isEmpty())
         throw std::invalid_argument("Make cannot be empty");
-    }
-    //! Model validation
-    if (model.trimmed().isEmpty()) {
+
+    if (model.trimmed().isEmpty())
         throw std::invalid_argument("Model cannot be empty");
-    }
-    if (horsepower < 0) {
+
+    if (horsepower < 0)
         throw std::invalid_argument("Horsepower cannot be negative");
-    }
 }
 
 // *Getters implementation

@@ -10,28 +10,36 @@ DatabaseManager::DatabaseManager(QObject *parent)
 
 }
 
-bool DatabaseManager::connectDatabase() {
-    //? Establish a connection to the database
-    // ! addDatabase() is a static method, returns a QSqlDatabase object
+bool DatabaseManager::connectDatabase()
+{
+    // Establish a connection to the database
     m_database = QSqlDatabase::addDatabase("QSQLITE");
 
-    // ? Tell the database which file to use
-    // * Automatically creates the file if it doesn't exist
+    // Tell SQLite which database file to use
     m_database.setDatabaseName("dealership.db");
 
-    // * Open the database connection
-    if (!m_database.open()) {
-        qDebug() << "Failed to open database connection" << m_database.lastError().text();
+    // Open the database connection
+    if (!m_database.open())
+    {
+        qDebug() << "Failed to open database connection:"
+                 << m_database.lastError().text();
         return false;
     }
-    qDebug () << "Database connection established!";
-    if (!createTables()) {
-        qDebug() << "Failed to create tables";
+
+    // Enable foreign key constraints
+    QSqlQuery pragmaQuery;
+    if (!pragmaQuery.exec("PRAGMA foreign_keys = ON;"))
+    {
+        qDebug() << "Failed to enable foreign keys:"
+                 << pragmaQuery.lastError().text();
         return false;
     }
+
+    qDebug() << "Database connection established!";
 
     return true;
 }
+
 
 bool DatabaseManager::disconnectDatabase() {
     

@@ -67,6 +67,22 @@ public:
         CarStatus status
     );
 
+    //* Used when constructing a car object from a database record.
+Car(int id,
+    const QString& make,
+    const QString& model,
+    int year,
+    double price,
+    int mileage,
+    const QString& color,
+    const QString& engineName,
+    int horsepower,
+    TransmissionType transmission,
+    bool isNew,
+    const QString& licensePlate,
+    const QString& vin,
+    CarStatus status);
+
     ~Car() = default;
 
     // * Getters
