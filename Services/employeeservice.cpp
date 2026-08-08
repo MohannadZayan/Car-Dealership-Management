@@ -23,6 +23,13 @@ Employee* EmployeeService::findEmployeeById(int id)
     return find([id](const Employee& employee) { return employee.id() == id; });
 }
 
+Employee* EmployeeService::findEmployeeByEmail(const QString& email)
+{
+    return find([&email](const Employee& employee) {
+        return employee.email().compare(email, Qt::CaseInsensitive) == 0;
+    });
+}
+
 QList<Employee> EmployeeService::filterEmployees(const EmployeeFilterCriteria& criteria) const
 {
     return filter([&criteria](const Employee& employee) { return employee.matches(criteria); });
@@ -32,6 +39,17 @@ bool EmployeeService::addEmployee(const Employee& employee)
 {
     return guardedExecute("EmployeeService", "addEmployee", [&]() -> bool
     {
+        // Employees.email has no DB-level UNIQUE enforcement that also covers
+        // case-insensitivity, and login-by-email would be ambiguous with duplicates.
+        if (find([&](const Employee& existing) {
+                return existing.email().compare(employee.email(), Qt::CaseInsensitive) == 0;
+            }) != nullptr)
+        {
+            m_lastError = ServiceError::DuplicateEmail;
+            qWarning() << "EmployeeService: Email already in use:" << employee.email();
+            return false;
+        }
+
         QSqlQuery query;
 
         query.prepare(R"(
@@ -42,11 +60,13 @@ bool EmployeeService::addEmployee(const Employee& employee)
                 role,
                 salary,
                 phone,
-                email
+                email,
+                password_hash,
+                password_salt
             )
             VALUES
             (
-                ?, ?, ?, ?, ?, ?
+                ?, ?, ?, ?, ?, ?, ?, ?
             )
         )");
 
@@ -56,6 +76,8 @@ bool EmployeeService::addEmployee(const Employee& employee)
         query.addBindValue(employee.salary());
         query.addBindValue(employee.phone());
         query.addBindValue(employee.email());
+        query.addBindValue(employee.passwordHash());
+        query.addBindValue(employee.passwordSalt());
 
         if (!m_databaseManager->executeQuery(query))
         {
@@ -80,7 +102,9 @@ bool EmployeeService::loadEmployees()
                 role,
                 salary,
                 phone,
-                email
+                email,
+                password_hash,
+                password_salt
             FROM Employees;
         )");
 
@@ -100,7 +124,9 @@ bool EmployeeService::loadEmployees()
                 static_cast<EmployeeRole>(query.value("role").toInt()),
                 query.value("salary").toDouble(),
                 query.value("phone").toString(),
-                query.value("email").toString()
+                query.value("email").toString(),
+                query.value("password_hash").toString(),
+                query.value("password_salt").toString()
             );
 
             m_entities.append(employee);
@@ -124,7 +150,9 @@ bool EmployeeService::updateEmployee(const Employee& updatedEmployee)
                 role = ?,
                 salary = ?,
                 phone = ?,
-                email = ?
+                email = ?,
+                password_hash = ?,
+                password_salt = ?
             WHERE id = ?
         )");
 
@@ -134,6 +162,8 @@ bool EmployeeService::updateEmployee(const Employee& updatedEmployee)
         query.addBindValue(updatedEmployee.salary());
         query.addBindValue(updatedEmployee.phone());
         query.addBindValue(updatedEmployee.email());
+        query.addBindValue(updatedEmployee.passwordHash());
+        query.addBindValue(updatedEmployee.passwordSalt());
 
         query.addBindValue(updatedEmployee.id());
 

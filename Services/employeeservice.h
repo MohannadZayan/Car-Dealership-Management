@@ -29,6 +29,10 @@ public:
     //? or nullptr if no employee with that ID exists.
     Employee* findEmployeeById(int id);
 
+    //? Returns a pointer to the employee with the specified email address (case-insensitive),
+    //? or nullptr if no employee with that email address exists. Used for login lookups.
+    Employee* findEmployeeByEmail(const QString& email);
+
     //? Returns the employees that match every field set in criteria (e.g. role, salary range).
     QList<Employee> filterEmployees(const EmployeeFilterCriteria& criteria) const;
 };

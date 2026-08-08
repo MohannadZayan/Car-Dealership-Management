@@ -103,6 +103,14 @@ bool DatabaseManager::createTables()
     if (!createEmployeesTable())
         return false;
 
+    // Same reasoning as the Cars/body_type migration above — brings an existing
+    // Employees table up to date with the columns authentication needs.
+    if (!ensureColumnExists("Employees", "password_hash", "TEXT NOT NULL DEFAULT ''"))
+        return false;
+
+    if (!ensureColumnExists("Employees", "password_salt", "TEXT NOT NULL DEFAULT ''"))
+        return false;
+
     qDebug() << "Creating VehicleSales table...";
     if (!createVehicleSalesTable())
         return false;
@@ -232,7 +240,10 @@ bool DatabaseManager::createEmployeesTable()
             salary REAL NOT NULL CHECK(salary >= 0),
 
             phone TEXT,
-            email TEXT UNIQUE
+            email TEXT UNIQUE,
+
+            password_hash TEXT NOT NULL DEFAULT '',
+            password_salt TEXT NOT NULL DEFAULT ''
         );
     )"))
     {

@@ -17,7 +17,8 @@ enum class ServiceError
     NotConnected,     //? No database connection was available.
     NotFound,         //? The targeted row (by id) doesn't exist.
     ValidationFailed, //? Constructing/validating the entity threw (e.g. bad DB row data).
-    DatabaseError     //? The query itself failed (bad SQL, constraint violation, etc.).
+    DatabaseError,    //? The query itself failed (bad SQL, constraint violation, etc.).
+    DuplicateEmail    //? Another record already uses that email address.
 };
 
 // * Shared cache + lookup/filter logic for every *Service class.
@@ -65,6 +66,8 @@ public:
             return "The record failed validation.";
         case ServiceError::DatabaseError:
             return "The database operation failed.";
+        case ServiceError::DuplicateEmail:
+            return "That email address is already in use.";
         }
 
         return QString();

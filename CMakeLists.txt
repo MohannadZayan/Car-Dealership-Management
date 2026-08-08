@@ -4,7 +4,7 @@ project(Car_Dealership_Management VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql Network)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
@@ -44,6 +44,8 @@ qt_add_qml_module(appCar_Dealership_Management
         Models/Invoice.h
         Models/Invoice.cpp
 
+        Services/authservice.h
+        Services/authservice.cpp
         Services/baseservice.h
         Services/carservice.h
         Services/carservice.cpp
@@ -72,6 +74,7 @@ target_link_libraries(appCar_Dealership_Management
     PRIVATE
         Qt6::Quick
         Qt6::Sql
+        Qt6::Network
 )
 
 install(TARGETS appCar_Dealership_Management
