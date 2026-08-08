@@ -256,6 +256,12 @@ bool AppController::isManager() const
     return requireManager();
 }
 
+int AppController::currentEmployeeId() const
+{
+    Employee* current = m_authService.currentEmployee();
+    return current == nullptr ? 0 : current->id();
+}
+
 QString AppController::currentEmployeeName() const
 {
     Employee* current = m_authService.currentEmployee();

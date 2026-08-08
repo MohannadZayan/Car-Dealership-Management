@@ -33,6 +33,7 @@ class AppController : public QObject
 
     Q_PROPERTY(bool isLoggedIn READ isLoggedIn NOTIFY authChanged)
     Q_PROPERTY(bool isManager READ isManager NOTIFY authChanged)
+    Q_PROPERTY(int currentEmployeeId READ currentEmployeeId NOTIFY authChanged)
     Q_PROPERTY(QString currentEmployeeName READ currentEmployeeName NOTIFY authChanged)
     Q_PROPERTY(QString currentEmployeeRole READ currentEmployeeRole NOTIFY authChanged)
     Q_PROPERTY(QString databaseError READ databaseError NOTIFY databaseErrorChanged)
@@ -63,6 +64,7 @@ public:
 
     bool isLoggedIn() const;
     bool isManager() const;
+    int currentEmployeeId() const;
     QString currentEmployeeName() const;
     QString currentEmployeeRole() const;
     QString databaseError() const;
