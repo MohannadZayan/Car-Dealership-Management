@@ -25,13 +25,7 @@ Invoice* InvoiceService::findInvoiceById(int id)
 
 bool InvoiceService::addInvoice(const Invoice& invoice)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "InvoiceService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("InvoiceService", "addInvoice", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -66,23 +60,12 @@ bool InvoiceService::addInvoice(const Invoice& invoice)
         }
 
         return loadInvoices();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "InvoiceService::addInvoice():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool InvoiceService::loadInvoices()
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "InvoiceService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("InvoiceService", "loadInvoices", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -128,23 +111,12 @@ bool InvoiceService::loadInvoices()
         }
 
         return true;
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "InvoiceService::loadInvoices():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool InvoiceService::updateInvoice(const Invoice& updatedInvoice)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "InvoiceService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("InvoiceService", "updateInvoice", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -177,29 +149,19 @@ bool InvoiceService::updateInvoice(const Invoice& updatedInvoice)
 
         if (query.numRowsAffected() == 0)
         {
+            m_lastError = ServiceError::NotFound;
             qWarning() << "InvoiceService: No invoice found with ID"
                        << updatedInvoice.id();
             return false;
         }
 
         return loadInvoices();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "InvoiceService::updateInvoice():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool InvoiceService::removeInvoice(int id)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "InvoiceService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("InvoiceService", "removeInvoice", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -217,16 +179,12 @@ bool InvoiceService::removeInvoice(int id)
 
         if (query.numRowsAffected() == 0)
         {
+            m_lastError = ServiceError::NotFound;
             qWarning() << "InvoiceService: No invoice found with ID"
                        << id;
             return false;
         }
 
         return loadInvoices();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "InvoiceService::removeInvoice():" << e.what();
-        return false;
-    }
+    });
 }

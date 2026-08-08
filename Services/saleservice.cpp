@@ -30,13 +30,7 @@ QList<Sale> SaleService::filterSales(const SaleFilterCriteria& criteria) const
 
 bool SaleService::addSale(const Sale& sale)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "SaleService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("SaleService", "addSale", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -67,23 +61,12 @@ bool SaleService::addSale(const Sale& sale)
         }
 
         return loadSales();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "SaleService::addSale():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool SaleService::loadSales()
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "SaleService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("SaleService", "loadSales", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -123,23 +106,12 @@ bool SaleService::loadSales()
         }
 
         return true;
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "SaleService::loadSales():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool SaleService::updateSale(const Sale& updatedSale)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "SaleService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("SaleService", "updateSale", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -168,29 +140,19 @@ bool SaleService::updateSale(const Sale& updatedSale)
 
         if (query.numRowsAffected() == 0)
         {
+            m_lastError = ServiceError::NotFound;
             qWarning() << "SaleService: No sale found with ID"
                        << updatedSale.id();
             return false;
         }
 
         return loadSales();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "SaleService::updateSale():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool SaleService::removeSale(int id)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "SaleService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("SaleService", "removeSale", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -208,16 +170,12 @@ bool SaleService::removeSale(int id)
 
         if (query.numRowsAffected() == 0)
         {
+            m_lastError = ServiceError::NotFound;
             qWarning() << "SaleService: No sale found with ID"
                        << id;
             return false;
         }
 
         return loadSales();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "SaleService::removeSale():" << e.what();
-        return false;
-    }
+    });
 }

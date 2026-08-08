@@ -76,7 +76,8 @@ public:
     int horsepower,
     TransmissionType transmission,
     VehicleBodyType bodyType,
-    bool isNew
+    bool isNew,
+    const QString& vin
     );
 
     //* Used when constructing a car object from a database record.

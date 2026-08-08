@@ -37,13 +37,7 @@ Customer* CustomerService::findCustomerByEmail(const QString& email)
 
 bool CustomerService::addCustomer(const Customer& customer)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "CustomerService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("CustomerService", "addCustomer", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -75,23 +69,12 @@ bool CustomerService::addCustomer(const Customer& customer)
 
         //? Reload the cache so every Customer has the correct database-generated ID.
         return loadCustomers();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "CustomerService::addCustomer():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool CustomerService::loadCustomers()
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "CustomerService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("CustomerService", "loadCustomers", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -128,23 +111,12 @@ bool CustomerService::loadCustomers()
         }
 
         return true;
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "CustomerService::loadCustomers():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool CustomerService::updateCustomer(const Customer& updatedCustomer)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "CustomerService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("CustomerService", "updateCustomer", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -176,29 +148,19 @@ bool CustomerService::updateCustomer(const Customer& updatedCustomer)
         // Ensure a customer with this ID actually existed.
         if (query.numRowsAffected() == 0)
         {
+            m_lastError = ServiceError::NotFound;
             qWarning() << "CustomerService: No customer found with ID"
                        << updatedCustomer.id();
             return false;
         }
 
         return loadCustomers();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "CustomerService::updateCustomer():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool CustomerService::removeCustomer(int id)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "CustomerService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("CustomerService", "removeCustomer", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -217,16 +179,12 @@ bool CustomerService::removeCustomer(int id)
         // Ensure a customer with this ID actually existed.
         if (query.numRowsAffected() == 0)
         {
+            m_lastError = ServiceError::NotFound;
             qWarning() << "CustomerService: No customer found with ID"
                        << id;
             return false;
         }
 
         return loadCustomers();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "CustomerService::removeCustomer():" << e.what();
-        return false;
-    }
+    });
 }

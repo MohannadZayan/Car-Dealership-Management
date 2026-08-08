@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSqlDatabase>
+#include <QString>
 
 class DatabaseManager : public QObject
 {
@@ -29,6 +30,14 @@ public:
     bool createEmployeesTable(); //? This method creates the employees table in the database if it does not already exist.
     bool createVehicleSalesTable(); //? This method creates the vehicle_sales table in the database if it does not already exist.
     bool createInvoicesTable(); //? This method creates the invoices table in the database if it does not already exist.
+
+    //? Adds columnName to tableName (with columnDefinition, e.g. "INTEGER NOT NULL DEFAULT 0")
+    //? if it isn't already there. CREATE TABLE IF NOT EXISTS only shapes brand-new databases;
+    //? this is what brings an existing database's tables up to the current column set when the
+    //? schema gains a column after that database was first created.
+    //! Only additive (new columns). A column's type changing would need a full table rebuild,
+    //! which this does not attempt.
+    bool ensureColumnExists(const QString& tableName, const QString& columnName, const QString& columnDefinition);
 
 signals:
 };

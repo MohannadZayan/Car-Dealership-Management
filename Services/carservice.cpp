@@ -32,13 +32,7 @@ QList<Car> CarService::filterCars(const CarFilterCriteria& criteria) const
 
 bool CarService::addCar(const Car& car)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "CarService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("CarService", "addCar", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -88,23 +82,12 @@ bool CarService::addCar(const Car& car)
 
         //* Reload the cache so every Car has the database-generated ID.
         return loadCars();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "CarService::addCar():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool CarService::loadCars()
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "CarService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("CarService", "loadCars", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -159,23 +142,12 @@ bool CarService::loadCars()
         }
 
         return true;
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "CarService::loadCars():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool CarService::updateCar(const Car& updatedCar)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "CarService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("CarService", "updateCar", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -222,24 +194,21 @@ bool CarService::updateCar(const Car& updatedCar)
             return false;
         }
 
+        // Make sure a row was actually updated.
+        if (query.numRowsAffected() == 0)
+        {
+            m_lastError = ServiceError::NotFound;
+            qWarning() << "CarService: No car found with ID" << updatedCar.id();
+            return false;
+        }
+
         return loadCars();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "CarService::updateCar():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool CarService::removeCar(int id)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "CarService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("CarService", "removeCar", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -258,15 +227,11 @@ bool CarService::removeCar(int id)
         // Make sure a row was actually deleted.
         if (query.numRowsAffected() == 0)
         {
+            m_lastError = ServiceError::NotFound;
             qWarning() << "CarService: No car found with ID" << id;
             return false;
         }
 
         return loadCars();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "CarService::removeCar():" << e.what();
-        return false;
-    }
+    });
 }

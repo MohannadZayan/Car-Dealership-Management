@@ -35,7 +35,8 @@ Car::Car(
     int horsepower,
     TransmissionType transmission,
     VehicleBodyType bodyType,
-    bool isNew
+    bool isNew,
+    const QString& vin
 )
     : m_id(0),
       m_make(make),
@@ -50,7 +51,7 @@ Car::Car(
       m_bodyType(bodyType),
       m_isNew(isNew),
       m_licensePlate(""),
-      m_vin(""),
+      m_vin(vin),
       m_status(CarStatus::Available)
 {
     // ! First layer of validation
@@ -72,6 +73,9 @@ Car::Car(
 
     if (horsepower < 0)
         throw std::invalid_argument("Horsepower cannot be negative");
+
+    if (vin.trimmed().isEmpty())
+        throw std::invalid_argument("VIN cannot be empty");
 }
 
 // * Database constructor

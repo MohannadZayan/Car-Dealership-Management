@@ -30,13 +30,7 @@ QList<Employee> EmployeeService::filterEmployees(const EmployeeFilterCriteria& c
 
 bool EmployeeService::addEmployee(const Employee& employee)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "EmployeeService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("EmployeeService", "addEmployee", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -69,23 +63,12 @@ bool EmployeeService::addEmployee(const Employee& employee)
         }
 
         return loadEmployees();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "EmployeeService::addEmployee():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool EmployeeService::loadEmployees()
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "EmployeeService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("EmployeeService", "loadEmployees", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -124,23 +107,12 @@ bool EmployeeService::loadEmployees()
         }
 
         return true;
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "EmployeeService::loadEmployees():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool EmployeeService::updateEmployee(const Employee& updatedEmployee)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "EmployeeService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("EmployeeService", "updateEmployee", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -172,29 +144,19 @@ bool EmployeeService::updateEmployee(const Employee& updatedEmployee)
 
         if (query.numRowsAffected() == 0)
         {
+            m_lastError = ServiceError::NotFound;
             qWarning() << "EmployeeService: No employee found with ID"
                        << updatedEmployee.id();
             return false;
         }
 
         return loadEmployees();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "EmployeeService::updateEmployee():" << e.what();
-        return false;
-    }
+    });
 }
 
 bool EmployeeService::removeEmployee(int id)
 {
-    if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
-    {
-        qWarning() << "EmployeeService: Database is not connected.";
-        return false;
-    }
-
-    try
+    return guardedExecute("EmployeeService", "removeEmployee", [&]() -> bool
     {
         QSqlQuery query;
 
@@ -212,16 +174,12 @@ bool EmployeeService::removeEmployee(int id)
 
         if (query.numRowsAffected() == 0)
         {
+            m_lastError = ServiceError::NotFound;
             qWarning() << "EmployeeService: No employee found with ID"
                        << id;
             return false;
         }
 
         return loadEmployees();
-    }
-    catch (const std::exception& e)
-    {
-        qCritical() << "EmployeeService::removeEmployee():" << e.what();
-        return false;
-    }
+    });
 }

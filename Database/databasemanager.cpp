@@ -1,8 +1,10 @@
 #include "databasemanager.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QStandardPaths>
 
 DatabaseManager::DatabaseManager(QObject *parent)
     : QObject{parent}
@@ -15,8 +17,13 @@ bool DatabaseManager::connectDatabase()
     // Establish a connection to the database
     m_database = QSqlDatabase::addDatabase("QSQLITE");
 
-    // Tell SQLite which database file to use
-    m_database.setDatabaseName("dealership.db");
+    // Store the database in the app's standard data location rather than
+    // wherever the process happens to be launched from, so it's always
+    // the same file regardless of working directory.
+    const QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir().mkpath(dataDir);
+
+    m_database.setDatabaseName(dataDir + QDir::separator() + "dealership.db");
 
     // Open the database connection
     if (!m_database.open())
@@ -83,6 +90,11 @@ bool DatabaseManager::createTables()
     if (!createCarsTable())
         return false;
 
+    // CREATE TABLE IF NOT EXISTS only shapes a brand-new Cars table; a database created
+    // before body_type existed needs this to actually gain the column.
+    if (!ensureColumnExists("Cars", "body_type", "INTEGER NOT NULL DEFAULT 0"))
+        return false;
+
     qDebug() << "Creating Customers table...";
     if (!createCustomersTable())
         return false;
@@ -101,6 +113,36 @@ bool DatabaseManager::createTables()
 
     qDebug() << "All tables created successfully.";
 
+    return true;
+}
+
+bool DatabaseManager::ensureColumnExists(const QString& tableName, const QString& columnName, const QString& columnDefinition)
+{
+    QSqlQuery pragmaQuery;
+
+    if (!pragmaQuery.exec(QString("PRAGMA table_info(%1);").arg(tableName)))
+    {
+        qDebug() << "Failed to inspect table" << tableName << ":" << pragmaQuery.lastError().text();
+        return false;
+    }
+
+    while (pragmaQuery.next())
+    {
+        if (pragmaQuery.value("name").toString().compare(columnName, Qt::CaseInsensitive) == 0)
+        {
+            return true; // Column already present, nothing to migrate.
+        }
+    }
+
+    QSqlQuery alterQuery;
+
+    if (!alterQuery.exec(QString("ALTER TABLE %1 ADD COLUMN %2 %3;").arg(tableName, columnName, columnDefinition)))
+    {
+        qDebug() << "Failed to add column" << columnName << "to" << tableName << ":" << alterQuery.lastError().text();
+        return false;
+    }
+
+    qDebug() << "Migrated table" << tableName << ": added column" << columnName;
     return true;
 }
 
