@@ -38,12 +38,15 @@ qt_add_qml_module(appCar_Dealership_Management
         Models/employee.h
         Models/employee.cpp
         Models/employeefiltercriteria.h
+        Models/employeesummary.h
         Models/sale.h
         Models/sale.cpp
         Models/salefiltercriteria.h
         Models/Invoice.h
         Models/Invoice.cpp
 
+        Services/authorizationservice.h
+        Services/authorizationservice.cpp
         Services/authservice.h
         Services/authservice.cpp
         Services/baseservice.h
