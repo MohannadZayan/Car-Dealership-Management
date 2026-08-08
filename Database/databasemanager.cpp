@@ -246,7 +246,7 @@ bool DatabaseManager::createInvoicesTable()
             tax REAL NOT NULL CHECK(tax >= 0),
             total REAL NOT NULL CHECK(total >= 0),
 
-            payment_method TEXT NOT NULL,
+            payment_method INTEGER NOT NULL,
 
             FOREIGN KEY(sale_id) REFERENCES VehicleSales(id)
         );
