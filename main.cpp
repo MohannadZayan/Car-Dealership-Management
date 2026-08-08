@@ -7,9 +7,8 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    // ! Temporary test
-    DatabaseManager db;
-    db.connectDatabase();
+    DatabaseManager dbManager;
+    dbManager.connectDatabase();
 
     QQmlApplicationEngine engine;
 
