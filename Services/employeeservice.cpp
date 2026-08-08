@@ -31,6 +31,21 @@ Employee* EmployeeService::findEmployeeById(int id)
     return nullptr;
 }
 
+QList<Employee> EmployeeService::filterEmployees(const EmployeeFilterCriteria& criteria) const
+{
+    QList<Employee> result;
+
+    for (const Employee& employee : m_employees)
+    {
+        if (employee.matches(criteria))
+        {
+            result.append(employee);
+        }
+    }
+
+    return result;
+}
+
 bool EmployeeService::addEmployee(const Employee& employee)
 {
     if (m_databaseManager == nullptr || !m_databaseManager->isConnected())

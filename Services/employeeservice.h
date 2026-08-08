@@ -4,6 +4,7 @@
 #include <QList>
 
 #include "Models/employee.h"
+#include "Models/employeefiltercriteria.h"
 #include "Database/databasemanager.h"
 
 class EmployeeService
@@ -30,6 +31,9 @@ public:
     //? Returns a pointer to the employee with the specified ID,
     //? or nullptr if no employee with that ID exists.
     Employee* findEmployeeById(int id);
+
+    //? Returns the employees that match every field set in criteria (e.g. role, salary range).
+    QList<Employee> filterEmployees(const EmployeeFilterCriteria& criteria) const;
 };
 
 #endif // EMPLOYEESERVICE_H

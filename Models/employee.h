@@ -3,6 +3,8 @@
 
 #include <QString>
 
+struct EmployeeFilterCriteria;
+
 // ? Represents the role of an employee in the dealership.
 enum class EmployeeRole
 {
@@ -66,6 +68,9 @@ public:
 
     const QString& phone() const;
     const QString& email() const;
+
+    //* Filtering
+    bool matches(const EmployeeFilterCriteria& criteria) const; //? Returns true if this employee satisfies every field set in criteria.
 
     //* Setters
     //! First and last name are immutable after creation.

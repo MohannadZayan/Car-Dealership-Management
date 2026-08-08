@@ -1,4 +1,5 @@
 #include "employee.h"
+#include "employeefiltercriteria.h"
 
 #include <stdexcept>
 
@@ -111,6 +112,22 @@ const QString& Employee::phone() const
 const QString& Employee::email() const
 {
     return m_email;
+}
+
+// * Filtering implementation
+
+bool Employee::matches(const EmployeeFilterCriteria& criteria) const
+{
+    if (criteria.role && m_role != *criteria.role)
+        return false;
+
+    if (criteria.minSalary && m_salary < *criteria.minSalary)
+        return false;
+
+    if (criteria.maxSalary && m_salary > *criteria.maxSalary)
+        return false;
+
+    return true;
 }
 
 void Employee::setRole(EmployeeRole role)

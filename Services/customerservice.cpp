@@ -27,6 +27,33 @@ Customer* CustomerService::findCustomerById(int id)
 
     return nullptr;
 }
+
+Customer* CustomerService::findCustomerByPhone(const QString& phone)
+{
+    for (Customer& customer : m_customers)
+    {
+        if (customer.phone().compare(phone, Qt::CaseInsensitive) == 0)
+        {
+            return &customer;
+        }
+    }
+
+    return nullptr;
+}
+
+Customer* CustomerService::findCustomerByEmail(const QString& email)
+{
+    for (Customer& customer : m_customers)
+    {
+        if (customer.email().compare(email, Qt::CaseInsensitive) == 0)
+        {
+            return &customer;
+        }
+    }
+
+    return nullptr;
+}
+
 bool CustomerService::addCustomer(const Customer& customer)
 {
     if (m_databaseManager == nullptr || !m_databaseManager->isConnected())
