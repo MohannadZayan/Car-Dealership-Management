@@ -2,10 +2,12 @@
 
 #include <exception>
 
+#include <QCoreApplication>
 #include <QDate>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDir>
+#include <QGuiApplication>
 #include <QPrinter>
 #include <QStandardPaths>
 #include <QTextDocument>
@@ -13,16 +15,21 @@
 
 namespace
 {
+    // ? These are free functions (not AppController methods), so they can't use the
+    // ? implicit tr() a QObject member gets — QCoreApplication::translate() is the
+    // ? explicit equivalent, keyed by an explicit context string ("AppController")
+    // ? instead of the enclosing class. lupdate picks these up the same way it
+    // ? does qsTr() in QML.
     QString employeeRoleToString(EmployeeRole role)
     {
         switch (role)
         {
         case EmployeeRole::Manager:
-            return "Manager";
+            return QCoreApplication::translate("AppController", "Manager");
         case EmployeeRole::SalesPerson:
-            return "SalesPerson";
+            return QCoreApplication::translate("AppController", "SalesPerson");
         case EmployeeRole::CustomerServiceRepresentative:
-            return "CustomerServiceRepresentative";
+            return QCoreApplication::translate("AppController", "CustomerServiceRepresentative");
         }
         return QString();
     }
@@ -31,14 +38,14 @@ namespace
     {
         switch (bodyType)
         {
-        case VehicleBodyType::Sedan: return "Sedan";
-        case VehicleBodyType::SUV: return "SUV";
-        case VehicleBodyType::Coupe: return "Coupe";
-        case VehicleBodyType::Hatchback: return "Hatchback";
-        case VehicleBodyType::Convertible: return "Convertible";
-        case VehicleBodyType::Pickup: return "Pickup";
-        case VehicleBodyType::Wagon: return "Wagon";
-        case VehicleBodyType::Van: return "Van";
+        case VehicleBodyType::Sedan: return QCoreApplication::translate("AppController", "Sedan");
+        case VehicleBodyType::SUV: return QCoreApplication::translate("AppController", "SUV");
+        case VehicleBodyType::Coupe: return QCoreApplication::translate("AppController", "Coupe");
+        case VehicleBodyType::Hatchback: return QCoreApplication::translate("AppController", "Hatchback");
+        case VehicleBodyType::Convertible: return QCoreApplication::translate("AppController", "Convertible");
+        case VehicleBodyType::Pickup: return QCoreApplication::translate("AppController", "Pickup");
+        case VehicleBodyType::Wagon: return QCoreApplication::translate("AppController", "Wagon");
+        case VehicleBodyType::Van: return QCoreApplication::translate("AppController", "Van");
         }
         return QString();
     }
@@ -47,8 +54,8 @@ namespace
     {
         switch (transmission)
         {
-        case TransmissionType::Manual: return "Manual";
-        case TransmissionType::Automatic: return "Automatic";
+        case TransmissionType::Manual: return QCoreApplication::translate("AppController", "Manual");
+        case TransmissionType::Automatic: return QCoreApplication::translate("AppController", "Automatic");
         }
         return QString();
     }
@@ -57,10 +64,10 @@ namespace
     {
         switch (status)
         {
-        case CarStatus::Available: return "Available";
-        case CarStatus::Reserved: return "Reserved";
-        case CarStatus::Sold: return "Sold";
-        case CarStatus::InTransit: return "InTransit";
+        case CarStatus::Available: return QCoreApplication::translate("AppController", "Available");
+        case CarStatus::Reserved: return QCoreApplication::translate("AppController", "Reserved");
+        case CarStatus::Sold: return QCoreApplication::translate("AppController", "Sold");
+        case CarStatus::InTransit: return QCoreApplication::translate("AppController", "InTransit");
         }
         return QString();
     }
@@ -69,10 +76,10 @@ namespace
     {
         switch (method)
         {
-        case PaymentMethod::Cash: return "Cash";
-        case PaymentMethod::CreditCard: return "CreditCard";
-        case PaymentMethod::BankTransfer: return "BankTransfer";
-        case PaymentMethod::Financing: return "Financing";
+        case PaymentMethod::Cash: return QCoreApplication::translate("AppController", "Cash");
+        case PaymentMethod::CreditCard: return QCoreApplication::translate("AppController", "CreditCard");
+        case PaymentMethod::BankTransfer: return QCoreApplication::translate("AppController", "BankTransfer");
+        case PaymentMethod::Financing: return QCoreApplication::translate("AppController", "Financing");
         }
         return QString();
     }
@@ -277,6 +284,40 @@ QString AppController::currentEmployeeRole() const
 QString AppController::databaseError() const
 {
     return m_databaseError;
+}
+
+QString AppController::currentLanguage() const
+{
+    return m_currentLanguage;
+}
+
+bool AppController::setLanguage(const QString& languageCode)
+{
+    if (languageCode != "en" && languageCode != "ar")
+        return false;
+
+    QCoreApplication::removeTranslator(&m_translator);
+    QCoreApplication::removeTranslator(&m_pluralsTranslator);
+
+    if (languageCode == "ar")
+    {
+        if (!m_translator.load(QStringLiteral(":/i18n/qml_ar.qm"))
+            || !m_pluralsTranslator.load(QStringLiteral(":/i18n/qml_ar_plurals.qm")))
+        {
+            return false;
+        }
+        QCoreApplication::installTranslator(&m_translator);
+        QCoreApplication::installTranslator(&m_pluralsTranslator);
+    }
+
+    m_currentLanguage = languageCode;
+    QGuiApplication::setLayoutDirection(languageCode == "ar" ? Qt::RightToLeft : Qt::LeftToRight);
+
+    if (QQmlEngine* engine = qmlEngine(this))
+        engine->retranslate();
+
+    emit languageChanged();
+    return true;
 }
 
 // * Auth

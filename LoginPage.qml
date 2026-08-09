@@ -22,7 +22,7 @@ Rectangle {
         if (busy) return
 
         if (emailField.text.trim().length === 0 || passwordField.text.length === 0) {
-            errorText = "Enter your email and password."
+            errorText = qsTr("Enter your email and password.")
             return
         }
 
@@ -37,7 +37,7 @@ Rectangle {
             passwordField.text = ""
             root.loggedIn()
         } else {
-            errorText = "Invalid email or password."
+            errorText = qsTr("Invalid email or password.")
             shake.start()
         }
     }
@@ -127,7 +127,7 @@ Rectangle {
                 Text { text: "🚗"; font.pixelSize: 58 }
 
                 Text {
-                    text: "Dealership\nManagement"
+                    text: qsTr("Dealership\nManagement")
                     color: "#FFFFFF"
                     font.pixelSize: 42
                     font.weight: Font.Bold
@@ -135,7 +135,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: "Everything your dealership runs on — inventory, customers, sales, and invoices — in one place."
+                    text: qsTr("Everything your dealership runs on — inventory, customers, sales, and invoices — in one place.")
                     color: Qt.rgba(1, 1, 1, 0.85)
                     font.pixelSize: 17
                     wrapMode: Text.WordWrap
@@ -149,9 +149,9 @@ Rectangle {
 
                     Repeater {
                         model: [
-                            { icon: "🚘", label: "Track every vehicle in stock" },
-                            { icon: "🤝", label: "Record sales in seconds" },
-                            { icon: "🧾", label: "Generate and print invoices" }
+                            { icon: "🚘", label: qsTr("Track every vehicle in stock") },
+                            { icon: "🤝", label: qsTr("Record sales in seconds") },
+                            { icon: "🧾", label: qsTr("Generate and print invoices") }
                         ]
 
                         delegate: RowLayout {
@@ -167,7 +167,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 anchors.margins: Theme.spacingXLarge
-                text: "© " + new Date().getFullYear() + " Dealership Management"
+                text: qsTr("© %1 Dealership Management").arg(new Date().getFullYear())
                 color: Qt.rgba(1, 1, 1, 0.6)
                 font.pixelSize: Theme.fontSmall
             }
@@ -198,14 +198,14 @@ Rectangle {
                 }
 
                 Text {
-                    text: "Welcome back"
+                    text: qsTr("Welcome back")
                     color: backgroundImage.visible ? "#FFFFFF" : Theme.textPrimary
                     font.pixelSize: 34
                     font.weight: Font.Bold
                 }
 
                 Text {
-                    text: "Sign in to your dealership account"
+                    text: qsTr("Sign in to your dealership account")
                     color: backgroundImage.visible ? Qt.rgba(1, 1, 1, 0.75) : Theme.textMuted
                     font.pixelSize: 17
                     bottomPadding: Theme.spacingMedium
@@ -235,9 +235,9 @@ Rectangle {
                         AppTextField {
                             id: emailField
                             width: parent.width
-                            label: "Email"
+                            label: qsTr("Email")
                             icon: "✉"
-                            placeholder: "you@dealership.com"
+                            placeholder: qsTr("you@dealership.com")
                             error: root.errorText.length > 0
                             fieldHeight: 56
                             labelSize: 14
@@ -249,7 +249,7 @@ Rectangle {
                         AppTextField {
                             id: passwordField
                             width: parent.width
-                            label: "Password"
+                            label: qsTr("Password")
                             icon: "🔒"
                             placeholder: "••••••••"
                             isPassword: true
@@ -273,7 +273,7 @@ Rectangle {
                         PrimaryButton {
                             width: parent.width
                             height: 56
-                            text: "Log In"
+                            text: qsTr("Log In")
                             busy: root.busy
                             fontSize: 17
                             onClicked: root.attemptLogin()
@@ -282,7 +282,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: "Contact your manager if you don't have an account yet."
+                    text: qsTr("Contact your manager if you don't have an account yet.")
                     color: backgroundImage.visible ? Qt.rgba(1, 1, 1, 0.65) : Theme.textMuted
                     font.pixelSize: 13
                     topPadding: Theme.spacingSmall

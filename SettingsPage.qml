@@ -22,11 +22,11 @@ Item {
         successText = ""
 
         if (newPasswordField.text.length < 8) {
-            errorText = "New password must be at least 8 characters."
+            errorText = qsTr("New password must be at least 8 characters.")
             return
         }
         if (newPasswordField.text !== confirmPasswordField.text) {
-            errorText = "New password and confirmation don't match."
+            errorText = qsTr("New password and confirmation don't match.")
             return
         }
 
@@ -38,9 +38,9 @@ Item {
             oldPasswordField.text = ""
             newPasswordField.text = ""
             confirmPasswordField.text = ""
-            successText = "Password updated."
+            successText = qsTr("Password updated.")
         } else {
-            errorText = "Current password is incorrect, or the new one is too short."
+            errorText = qsTr("Current password is incorrect, or the new one is too short.")
         }
     }
 
@@ -67,17 +67,17 @@ Item {
                 anchors.margins: Theme.spacingLarge
                 spacing: Theme.spacingSmall
 
-                Text { text: "Account"; color: Theme.textPrimary; font.pixelSize: Theme.fontMedium; font.weight: Font.Bold }
+                Text { text: qsTr("Account"); color: Theme.textPrimary; font.pixelSize: Theme.fontMedium; font.weight: Font.Bold }
 
                 Row {
                     spacing: Theme.spacingSmall
                     topPadding: Theme.spacingSmall
-                    Text { text: "Name"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
+                    Text { text: qsTr("Name"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
                     Text { text: AppController.currentEmployeeName; color: Theme.textPrimary; font.pixelSize: Theme.fontBody }
                 }
                 Row {
                     spacing: Theme.spacingSmall
-                    Text { text: "Role"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
+                    Text { text: qsTr("Role"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
                     Badge { text: AppController.currentEmployeeRole; tone: "accent" }
                 }
             }
@@ -99,8 +99,8 @@ Item {
                 Column {
                     Layout.fillWidth: true
                     spacing: 2
-                    Text { text: "Appearance"; color: Theme.textPrimary; font.pixelSize: Theme.fontBody; font.weight: Font.DemiBold }
-                    Text { text: Theme.dark ? "Dark mode" : "Light mode"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall }
+                    Text { text: qsTr("Appearance"); color: Theme.textPrimary; font.pixelSize: Theme.fontBody; font.weight: Font.DemiBold }
+                    Text { text: Theme.dark ? qsTr("Dark mode") : qsTr("Light mode"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall }
                 }
 
                 Rectangle {
@@ -130,6 +130,53 @@ Item {
             }
         }
 
+        // --- Language card ---
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 84
+            radius: Theme.radiusLarge
+            color: Theme.card
+            border.width: 1
+            border.color: Theme.border
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: Theme.spacingLarge
+
+                Column {
+                    Layout.fillWidth: true
+                    spacing: 2
+                    Text { text: qsTr("Language"); color: Theme.textPrimary; font.pixelSize: Theme.fontBody; font.weight: Font.DemiBold }
+                    Text { text: AppController.currentLanguage === "ar" ? "العربية" : "English"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall }
+                }
+
+                Rectangle {
+                    id: languageTrack
+                    width: 52
+                    height: 28
+                    radius: 14
+                    color: AppController.currentLanguage === "ar" ? Theme.accent : Theme.border
+                    Behavior on color { ColorAnimation { duration: Theme.animMedium } }
+
+                    Rectangle {
+                        width: 22
+                        height: 22
+                        radius: 11
+                        color: "#FFFFFF"
+                        anchors.verticalCenter: parent.verticalCenter
+                        x: AppController.currentLanguage === "ar" ? parent.width - width - 3 : 3
+                        Behavior on x { NumberAnimation { duration: Theme.animMedium; easing.type: Easing.OutBack } }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: AppController.setLanguage(AppController.currentLanguage === "ar" ? "en" : "ar")
+                    }
+                }
+            }
+        }
+
         // --- Change password card ---
         Rectangle {
             Layout.fillWidth: true
@@ -147,11 +194,11 @@ Item {
                 anchors.margins: Theme.spacingLarge
                 spacing: Theme.spacingMedium
 
-                Text { text: "Change Password"; color: Theme.textPrimary; font.pixelSize: Theme.fontMedium; font.weight: Font.Bold }
+                Text { text: qsTr("Change Password"); color: Theme.textPrimary; font.pixelSize: Theme.fontMedium; font.weight: Font.Bold }
 
-                AppTextField { id: oldPasswordField; width: parent.width; label: "Current Password"; isPassword: true }
-                AppTextField { id: newPasswordField; width: parent.width; label: "New Password"; isPassword: true; placeholder: "At least 8 characters" }
-                AppTextField { id: confirmPasswordField; width: parent.width; label: "Confirm New Password"; isPassword: true }
+                AppTextField { id: oldPasswordField; width: parent.width; label: qsTr("Current Password"); isPassword: true }
+                AppTextField { id: newPasswordField; width: parent.width; label: qsTr("New Password"); isPassword: true; placeholder: qsTr("At least 8 characters") }
+                AppTextField { id: confirmPasswordField; width: parent.width; label: qsTr("Confirm New Password"); isPassword: true }
 
                 Text {
                     text: root.errorText
@@ -169,7 +216,7 @@ Item {
                 }
 
                 PrimaryButton {
-                    text: "Update Password"
+                    text: qsTr("Update Password")
                     busy: root.busy
                     onClicked: root.submitPasswordChange()
                 }

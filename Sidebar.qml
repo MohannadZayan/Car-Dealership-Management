@@ -35,7 +35,7 @@ Rectangle {
 
             Text { text: "🚗"; font.pixelSize: 22 }
             Text {
-                text: "Dealership"
+                text: qsTr("Dealership")
                 color: Theme.textPrimary
                 font.pixelSize: 18
                 font.weight: Font.Bold
@@ -45,42 +45,42 @@ Rectangle {
         NavButton {
             Layout.fillWidth: true
             icon: "▦"
-            label: "Dashboard"
+            label: qsTr("Dashboard")
             active: root.currentPage === "dashboard"
             onClicked: root.navigate("dashboard")
         }
         NavButton {
             Layout.fillWidth: true
             icon: "🚘"
-            label: "Inventory"
+            label: qsTr("Inventory")
             active: root.currentPage === "inventory"
             onClicked: root.navigate("inventory")
         }
         NavButton {
             Layout.fillWidth: true
             icon: "👤"
-            label: "Customers"
+            label: qsTr("Customers")
             active: root.currentPage === "customers"
             onClicked: root.navigate("customers")
         }
         NavButton {
             Layout.fillWidth: true
             icon: "💼"
-            label: "Employees"
+            label: qsTr("Employees")
             active: root.currentPage === "employees"
             onClicked: root.navigate("employees")
         }
         NavButton {
             Layout.fillWidth: true
             icon: "🤝"
-            label: "Sales"
+            label: qsTr("Sales")
             active: root.currentPage === "sales"
             onClicked: root.navigate("sales")
         }
         NavButton {
             Layout.fillWidth: true
             icon: "🧾"
-            label: "Invoices"
+            label: qsTr("Invoices")
             active: root.currentPage === "invoices"
             onClicked: root.navigate("invoices")
         }
@@ -92,14 +92,14 @@ Rectangle {
         NavButton {
             Layout.fillWidth: true
             icon: "⚙"
-            label: "Settings"
+            label: qsTr("Settings")
             active: root.currentPage === "settings"
             onClicked: root.navigate("settings")
         }
         NavButton {
             Layout.fillWidth: true
             icon: "⏻"
-            label: "Log Out"
+            label: qsTr("Log Out")
             onClicked: root.logout()
         }
     }

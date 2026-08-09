@@ -12,6 +12,9 @@ ApplicationWindow {
     title: qsTr("Dealership Management")
     color: Theme.background
 
+    LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
+    LayoutMirroring.childrenInherit: true
+
     Behavior on color { ColorAnimation { duration: Theme.animMedium } }
 
     StackView {

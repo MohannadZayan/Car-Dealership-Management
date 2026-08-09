@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQmlEngine>
 #include <QString>
+#include <QTranslator>
 #include <QVariantList>
 #include <QVariantMap>
 
@@ -37,6 +38,7 @@ class AppController : public QObject
     Q_PROPERTY(QString currentEmployeeName READ currentEmployeeName NOTIFY authChanged)
     Q_PROPERTY(QString currentEmployeeRole READ currentEmployeeRole NOTIFY authChanged)
     Q_PROPERTY(QString databaseError READ databaseError NOTIFY databaseErrorChanged)
+    Q_PROPERTY(QString currentLanguage READ currentLanguage NOTIFY languageChanged)
 
 private:
     DatabaseManager m_databaseManager;
@@ -51,6 +53,10 @@ private:
     };
 
     QString m_databaseError;
+
+    QString m_currentLanguage{"en"};
+    QTranslator m_translator;
+    QTranslator m_pluralsTranslator;
 
     //? Every non-auth method starts by checking this; returns true iff a login exists.
     bool requireLogin() const;
@@ -68,6 +74,12 @@ public:
     QString currentEmployeeName() const;
     QString currentEmployeeRole() const;
     QString databaseError() const;
+    QString currentLanguage() const;
+
+    //* Language — "en" or "ar". Swaps the installed QTranslators, retranslates
+    //* every live QML string in place (no restart), and flips layout direction
+    //* for Arabic's right-to-left reading order.
+    Q_INVOKABLE bool setLanguage(const QString& languageCode);
 
     //* Auth
     Q_INVOKABLE bool login(const QString& email, const QString& password);
@@ -119,6 +131,7 @@ public:
 signals:
     void authChanged();
     void databaseErrorChanged();
+    void languageChanged();
 };
 
 #endif // APPCONTROLLER_H

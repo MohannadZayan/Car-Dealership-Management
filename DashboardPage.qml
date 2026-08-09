@@ -52,7 +52,7 @@ Item {
             spacing: Theme.spacingLarge
 
             Text {
-                text: "Welcome back, " + AppController.currentEmployeeName.split(" ")[0] + " 👋"
+                text: qsTr("Welcome back, %1 👋").arg(AppController.currentEmployeeName.split(" ")[0])
                 color: Theme.textPrimary
                 font.pixelSize: Theme.fontLarge
                 font.weight: Font.Bold
@@ -67,32 +67,32 @@ Item {
                 StatCard {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 130
-                    title: "Total Inventory"
+                    title: qsTr("Total Inventory")
                     value: root.carsData.length.toString()
-                    subtitle: "Vehicles on the lot"
+                    subtitle: qsTr("Vehicles on the lot")
                 }
                 StatCard {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 130
-                    title: "Available"
+                    title: qsTr("Available")
                     value: root.countByStatus(0).toString()
-                    subtitle: "Ready to sell"
+                    subtitle: qsTr("Ready to sell")
                     trend: root.carsData.length > 0 ? Math.round(100 * root.countByStatus(0) / root.carsData.length) + "%" : ""
                     trendPositive: true
                 }
                 StatCard {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 130
-                    title: "Reserved"
+                    title: qsTr("Reserved")
                     value: root.countByStatus(1).toString()
-                    subtitle: "Pending sale"
+                    subtitle: qsTr("Pending sale")
                 }
                 StatCard {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 130
-                    title: "Sold"
+                    title: qsTr("Sold")
                     value: root.countByStatus(2).toString()
-                    subtitle: "Completed sales"
+                    subtitle: qsTr("Completed sales")
                 }
             }
 
@@ -105,23 +105,23 @@ Item {
                 StatCard {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 130
-                    title: "Customers"
+                    title: qsTr("Customers")
                     value: root.customersData.length.toString()
-                    subtitle: AppController.isManager ? "All customers" : "Assigned to you"
+                    subtitle: AppController.isManager ? qsTr("All customers") : qsTr("Assigned to you")
                 }
                 StatCard {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 130
-                    title: "Sales"
+                    title: qsTr("Sales")
                     value: root.salesData.length.toString()
-                    subtitle: AppController.isManager ? "All transactions" : "Made by you"
+                    subtitle: AppController.isManager ? qsTr("All transactions") : qsTr("Made by you")
                 }
                 StatCard {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 130
-                    title: "Revenue"
+                    title: qsTr("Revenue")
                     value: root.formatMoney(root.totalRevenue())
-                    subtitle: "From " + root.invoicesData.length + " invoice(s)"
+                    subtitle: qsTr("From %n invoice(s)", "", root.invoicesData.length)
                     trendPositive: true
                 }
             }
@@ -143,14 +143,14 @@ Item {
                     spacing: Theme.spacingMedium
 
                     Text {
-                        text: "Recent Sales"
+                        text: qsTr("Recent Sales")
                         color: Theme.textPrimary
                         font.pixelSize: Theme.fontMedium
                         font.weight: Font.Bold
                     }
 
                     Text {
-                        text: "No sales yet."
+                        text: qsTr("No sales yet.")
                         color: Theme.textMuted
                         font.pixelSize: Theme.fontBody
                         visible: root.salesData.length === 0
@@ -172,7 +172,7 @@ Item {
                                 anchors.rightMargin: 10
 
                                 Text {
-                                    text: "Sale #" + modelData.id
+                                    text: qsTr("Sale #%1").arg(modelData.id)
                                     color: Theme.textPrimary
                                     font.pixelSize: Theme.fontBody
                                     Layout.fillWidth: true

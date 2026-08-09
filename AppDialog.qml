@@ -11,8 +11,8 @@ Controls.Popup {
     default property alias contentData: bodyColumn.data
 
     property string title: ""
-    property string confirmText: "Save"
-    property string cancelText: "Cancel"
+    property string confirmText: qsTr("Save")
+    property string cancelText: qsTr("Cancel")
     property bool confirmEnabled: true
     property bool busy: false
     property string errorText: ""

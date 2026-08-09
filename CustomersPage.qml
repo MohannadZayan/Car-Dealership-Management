@@ -24,14 +24,14 @@ Item {
             Layout.fillWidth: true
 
             Text {
-                text: root.customersData.length + " customer(s) visible to you"
+                text: qsTr("%n customer(s) visible to you", "", root.customersData.length)
                 color: Theme.textMuted
                 font.pixelSize: Theme.fontBody
                 Layout.fillWidth: true
             }
 
             PrimaryButton {
-                text: "+ Add Customer"
+                text: qsTr("+ Add Customer")
                 onClicked: {
                     addDialog.errorText = ""
                     addDialog.open()
@@ -50,7 +50,7 @@ Item {
 
             Text {
                 anchors.centerIn: parent
-                text: "No customers yet."
+                text: qsTr("No customers yet.")
                 color: Theme.textMuted
                 font.pixelSize: Theme.fontBody
                 visible: root.customersData.length === 0
@@ -66,10 +66,10 @@ Item {
                     Layout.preferredHeight: 44
                     Layout.margins: Theme.spacingMedium
 
-                    Text { text: "Name"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 200 }
-                    Text { text: "Phone"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 150 }
-                    Text { text: "Email"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 220 }
-                    Text { text: "Address"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.fillWidth: true }
+                    Text { text: qsTr("Name"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 200 }
+                    Text { text: qsTr("Phone"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 150 }
+                    Text { text: qsTr("Email"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 220 }
+                    Text { text: qsTr("Address"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.fillWidth: true }
                     Item { Layout.preferredWidth: 80 }
                 }
 
@@ -107,7 +107,7 @@ Item {
                                 Text { text: modelData.address; color: Theme.textMuted; font.pixelSize: Theme.fontBody; Layout.fillWidth: true; elide: Text.ElideRight }
 
                                 GhostButton {
-                                    text: "Delete"
+                                    text: qsTr("Delete")
                                     tint: Theme.danger
                                     onClicked: {
                                         deleteConfirm.targetId = modelData.id
@@ -125,8 +125,8 @@ Item {
 
     AppDialog {
         id: addDialog
-        title: "Add Customer"
-        confirmText: "Add Customer"
+        title: qsTr("Add Customer")
+        confirmText: qsTr("Add Customer")
 
         confirmEnabled: firstNameField.text.trim().length > 0
                          && lastNameField.text.trim().length > 0
@@ -149,25 +149,25 @@ Item {
                 phoneField.text = ""; emailField.text = ""; addressField.text = ""
                 root.refresh()
             } else {
-                errorText = AppController.lastCustomerError() || "Could not add this customer."
+                errorText = AppController.lastCustomerError() || qsTr("Could not add this customer.")
             }
         }
 
         RowLayout {
             width: parent.width
             spacing: Theme.spacingMedium
-            AppTextField { id: firstNameField; Layout.fillWidth: true; label: "First Name"; placeholder: "Jane" }
-            AppTextField { id: lastNameField; Layout.fillWidth: true; label: "Last Name"; placeholder: "Doe" }
+            AppTextField { id: firstNameField; Layout.fillWidth: true; label: qsTr("First Name"); placeholder: qsTr("Jane") }
+            AppTextField { id: lastNameField; Layout.fillWidth: true; label: qsTr("Last Name"); placeholder: qsTr("Doe") }
         }
-        AppTextField { id: phoneField; width: parent.width; label: "Phone"; placeholder: "555-0100" }
-        AppTextField { id: emailField; width: parent.width; label: "Email"; placeholder: "jane@example.com" }
-        AppTextField { id: addressField; width: parent.width; label: "Address"; placeholder: "123 Main St" }
+        AppTextField { id: phoneField; width: parent.width; label: qsTr("Phone"); placeholder: "555-0100" }
+        AppTextField { id: emailField; width: parent.width; label: qsTr("Email"); placeholder: "jane@example.com" }
+        AppTextField { id: addressField; width: parent.width; label: qsTr("Address"); placeholder: qsTr("123 Main St") }
     }
 
     AppDialog {
         id: deleteConfirm
-        title: "Remove Customer"
-        confirmText: "Delete"
+        title: qsTr("Remove Customer")
+        confirmText: qsTr("Delete")
         property int targetId: -1
         property string targetLabel: ""
 
@@ -179,7 +179,7 @@ Item {
                 close()
                 root.refresh()
             } else {
-                errorText = AppController.lastCustomerError() || "Could not delete this customer."
+                errorText = AppController.lastCustomerError() || qsTr("Could not delete this customer.")
             }
         }
 
@@ -188,7 +188,7 @@ Item {
             wrapMode: Text.WordWrap
             color: Theme.textPrimary
             font.pixelSize: Theme.fontBody
-            text: "Remove " + deleteConfirm.targetLabel + "? This cannot be undone."
+            text: qsTr("Remove %1? This cannot be undone.").arg(deleteConfirm.targetLabel)
         }
     }
 

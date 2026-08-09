@@ -4,7 +4,7 @@ project(Car_Dealership_Management VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql Network PrintSupport)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql Network PrintSupport LinguistTools)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
@@ -119,6 +119,43 @@ target_link_libraries(appCar_Dealership_Management
 target_include_directories(appCar_Dealership_Management
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/Managers
+)
+
+# --- Internationalization (Arabic) ---
+#
+# 1. qt_add_lupdate scans SOURCE_TARGETS' QML + C++ sources for qsTr()/tr()
+#    calls and writes/updates the listed .ts (translation source) files with
+#    whatever it finds. This does NOT run automatically as part of a normal
+#    build — it's its own build target (e.g. `cmake --build build --target
+#    Car_Dealership_Management_lupdate`) you run by hand whenever translatable
+#    strings change, which is then translated (by hand, or by us once here)
+#    inside the .ts file. PLURALS_TS_FILE is a second, separate .ts file
+#    specifically for %n-plural-form strings (e.g. "%n vehicle(s)"), since
+#    Arabic's plural rules (six forms) are handled distinctly from regular
+#    translations.
+qt_add_lupdate(
+    SOURCE_TARGETS appCar_Dealership_Management
+    TS_FILES i18n/qml_ar.ts
+    PLURALS_TS_FILE i18n/qml_ar_plurals.ts
+)
+
+# 2. qt_add_lrelease compiles each .ts (XML, human/translator-editable) into a
+#    binary .qm (what QTranslator actually loads at runtime) as a normal part
+#    of every build. QM_FILES_OUTPUT_VARIABLE captures the resulting .qm file
+#    paths so we can feed them into qt_add_resources below.
+qt_add_lrelease(
+    TS_FILES i18n/qml_ar.ts i18n/qml_ar_plurals.ts
+    QM_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/i18n"
+    QM_FILES_OUTPUT_VARIABLE qm_files
+)
+
+# 3. Embed the compiled .qm files into the app's own Qt resource system
+#    (under :/i18n/...) so they ship inside the binary and AppController can
+#    load them with QTranslator regardless of the app's working directory.
+qt_add_resources(appCar_Dealership_Management "translations"
+    PREFIX "/i18n"
+    BASE "${CMAKE_CURRENT_BINARY_DIR}/i18n"
+    FILES ${qm_files}
 )
 
 install(TARGETS appCar_Dealership_Management

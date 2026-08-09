@@ -16,9 +16,9 @@ Item {
     }
 
     readonly property var roleOptions: [
-        { text: "Manager", value: 0 },
-        { text: "SalesPerson", value: 1 },
-        { text: "CustomerServiceRepresentative", value: 2 }
+        { text: qsTr("Manager"), value: 0 },
+        { text: qsTr("SalesPerson"), value: 1 },
+        { text: qsTr("CustomerServiceRepresentative"), value: 2 }
     ]
 
     function roleTone(role) {
@@ -34,14 +34,14 @@ Item {
             Layout.fillWidth: true
 
             Text {
-                text: root.employeesData.length + " employee(s)"
+                text: qsTr("%n employee(s)", "", root.employeesData.length)
                 color: Theme.textMuted
                 font.pixelSize: Theme.fontBody
                 Layout.fillWidth: true
             }
 
             PrimaryButton {
-                text: "+ Add Employee"
+                text: qsTr("+ Add Employee")
                 visible: AppController.isManager
                 onClicked: {
                     addDialog.errorText = ""
@@ -68,8 +68,8 @@ Item {
                     Layout.preferredHeight: 44
                     Layout.margins: Theme.spacingMedium
 
-                    Text { text: "Name"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 220 }
-                    Text { text: "Role"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.fillWidth: true }
+                    Text { text: qsTr("Name"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 220 }
+                    Text { text: qsTr("Role"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.fillWidth: true }
                     Text { text: ""; Layout.preferredWidth: 90 }
                 }
 
@@ -124,7 +124,7 @@ Item {
                                 }
 
                                 Text {
-                                    text: "View →"
+                                    text: qsTr("View →")
                                     color: Theme.textMuted
                                     font.pixelSize: Theme.fontSmall
                                     Layout.preferredWidth: 90
@@ -152,7 +152,7 @@ Item {
 
         Text {
             width: parent.width
-            text: "🔒 You don't have permission to view this employee's details."
+            text: qsTr("🔒 You don't have permission to view this employee's details.")
             color: Theme.textMuted
             font.pixelSize: Theme.fontBody
             wrapMode: Text.WordWrap
@@ -166,28 +166,28 @@ Item {
 
             Row {
                 width: parent.width
-                Text { text: "Role"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
+                Text { text: qsTr("Role"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
                 Text { text: detailDialog.employeeRole; color: Theme.textPrimary; font.pixelSize: Theme.fontBody }
             }
             Row {
                 width: parent.width
-                Text { text: "Salary"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
+                Text { text: qsTr("Salary"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
                 Text { text: "$" + Math.round(detailDialog.employeeSalary).toLocaleString(); color: Theme.textPrimary; font.pixelSize: Theme.fontBody }
             }
             Row {
                 width: parent.width
-                Text { text: "Phone"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
+                Text { text: qsTr("Phone"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
                 Text { text: detailDialog.employeePhone; color: Theme.textPrimary; font.pixelSize: Theme.fontBody }
             }
             Row {
                 width: parent.width
-                Text { text: "Email"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
+                Text { text: qsTr("Email"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; width: 100 }
                 Text { text: detailDialog.employeeEmail; color: Theme.textPrimary; font.pixelSize: Theme.fontBody }
             }
         }
 
         GhostButton {
-            text: "Close"
+            text: qsTr("Close")
             onClicked: detailDialog.close()
         }
     }
@@ -195,8 +195,8 @@ Item {
     // --- Add Employee (Manager only) ---
     AppDialog {
         id: addDialog
-        title: "Add Employee"
-        confirmText: "Add Employee"
+        title: qsTr("Add Employee")
+        confirmText: qsTr("Add Employee")
 
         confirmEnabled: firstNameField.text.trim().length > 0
                          && lastNameField.text.trim().length > 0
@@ -222,25 +222,25 @@ Item {
                 phoneField.text = ""; emailField.text = ""; passwordField.text = ""
                 root.refresh()
             } else {
-                errorText = AppController.lastEmployeeError() || "Could not add this employee."
+                errorText = AppController.lastEmployeeError() || qsTr("Could not add this employee.")
             }
         }
 
         RowLayout {
             width: parent.width
             spacing: Theme.spacingMedium
-            AppTextField { id: firstNameField; Layout.fillWidth: true; label: "First Name"; placeholder: "Sam" }
-            AppTextField { id: lastNameField; Layout.fillWidth: true; label: "Last Name"; placeholder: "SalesOne" }
+            AppTextField { id: firstNameField; Layout.fillWidth: true; label: qsTr("First Name"); placeholder: qsTr("Sam") }
+            AppTextField { id: lastNameField; Layout.fillWidth: true; label: qsTr("Last Name"); placeholder: qsTr("SalesOne") }
         }
-        AppComboBox { id: roleCombo; width: parent.width; label: "Role"; options: root.roleOptions; currentValue: 1 }
+        AppComboBox { id: roleCombo; width: parent.width; label: qsTr("Role"); options: root.roleOptions; currentValue: 1 }
         RowLayout {
             width: parent.width
             spacing: Theme.spacingMedium
-            AppTextField { id: salaryField; Layout.fillWidth: true; label: "Salary ($/yr)"; placeholder: "50000" }
-            AppTextField { id: phoneField; Layout.fillWidth: true; label: "Phone"; placeholder: "555-0100" }
+            AppTextField { id: salaryField; Layout.fillWidth: true; label: qsTr("Salary ($/yr)"); placeholder: "50000" }
+            AppTextField { id: phoneField; Layout.fillWidth: true; label: qsTr("Phone"); placeholder: "555-0100" }
         }
-        AppTextField { id: emailField; width: parent.width; label: "Email"; placeholder: "sam@dealership.com" }
-        AppTextField { id: passwordField; width: parent.width; label: "Temporary Password"; placeholder: "At least 8 characters"; isPassword: true }
+        AppTextField { id: emailField; width: parent.width; label: qsTr("Email"); placeholder: "sam@dealership.com" }
+        AppTextField { id: passwordField; width: parent.width; label: qsTr("Temporary Password"); placeholder: qsTr("At least 8 characters"); isPassword: true }
     }
 
     Component.onCompleted: refresh()

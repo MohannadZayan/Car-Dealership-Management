@@ -36,7 +36,7 @@ Rectangle {
 
         Text {
             id: label
-            text: root.busy ? "Please wait…" : root.text
+            text: root.busy ? qsTr("Please wait…") : root.text
             color: root.enabled ? "#FFFFFF" : Theme.textMuted
             font.pixelSize: root.fontSize
             font.weight: Font.DemiBold

@@ -25,19 +25,19 @@ Item {
         for (var i = 0; i < carsData.length; i++) {
             if (carsData[i].id === id) return carsData[i].make + " " + carsData[i].model
         }
-        return "Car #" + id
+        return qsTr("Car #%1").arg(id)
     }
     function customerLabel(id) {
         for (var i = 0; i < customersData.length; i++) {
             if (customersData[i].id === id) return customersData[i].firstName + " " + customersData[i].lastName
         }
-        return "Customer #" + id
+        return qsTr("Customer #%1").arg(id)
     }
     function employeeLabel(id) {
         for (var i = 0; i < employeesData.length; i++) {
             if (employeesData[i].id === id) return employeesData[i].firstName + " " + employeesData[i].lastName
         }
-        return "Employee #" + id
+        return qsTr("Employee #%1").arg(id)
     }
 
     function carOptions() {
@@ -71,14 +71,14 @@ Item {
             Layout.fillWidth: true
 
             Text {
-                text: root.salesData.length + " sale(s) visible to you"
+                text: qsTr("%n sale(s) visible to you", "", root.salesData.length)
                 color: Theme.textMuted
                 font.pixelSize: Theme.fontBody
                 Layout.fillWidth: true
             }
 
             PrimaryButton {
-                text: "+ Record Sale"
+                text: qsTr("+ Record Sale")
                 onClicked: {
                     addDialog.errorText = ""
                     addDialog.open()
@@ -97,7 +97,7 @@ Item {
 
             Text {
                 anchors.centerIn: parent
-                text: "No sales recorded yet."
+                text: qsTr("No sales recorded yet.")
                 color: Theme.textMuted
                 font.pixelSize: Theme.fontBody
                 visible: root.salesData.length === 0
@@ -113,11 +113,11 @@ Item {
                     Layout.preferredHeight: 44
                     Layout.margins: Theme.spacingMedium
 
-                    Text { text: "Vehicle"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 200 }
-                    Text { text: "Customer"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 180 }
-                    Text { text: "Sold By"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 160 }
-                    Text { text: "Date"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 120 }
-                    Text { text: "Price"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.fillWidth: true }
+                    Text { text: qsTr("Vehicle"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 200 }
+                    Text { text: qsTr("Customer"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 180 }
+                    Text { text: qsTr("Sold By"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 160 }
+                    Text { text: qsTr("Date"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 120 }
+                    Text { text: qsTr("Price"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.fillWidth: true }
                 }
 
                 Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
@@ -163,8 +163,8 @@ Item {
 
     AppDialog {
         id: addDialog
-        title: "Record Sale"
-        confirmText: "Record Sale"
+        title: qsTr("Record Sale")
+        confirmText: qsTr("Record Sale")
 
         confirmEnabled: carCombo.currentValue !== undefined
                          && customerCombo.currentValue !== undefined
@@ -187,7 +187,7 @@ Item {
                 priceField.text = ""
                 root.refresh()
             } else {
-                errorText = AppController.lastSaleError() || "Could not record this sale."
+                errorText = AppController.lastSaleError() || qsTr("Could not record this sale.")
             }
         }
 
@@ -196,20 +196,20 @@ Item {
             wrapMode: Text.WordWrap
             color: Theme.warning
             font.pixelSize: Theme.fontSmall
-            text: "⚠ No customers are visible to you yet — a customer only appears in your list once a sale links them to you. Ask a Manager to record the first sale for a brand-new customer."
+            text: qsTr("⚠ No customers are visible to you yet — a customer only appears in your list once a sale links them to you. Ask a Manager to record the first sale for a brand-new customer.")
             visible: root.customersData.length === 0
         }
 
-        AppComboBox { id: carCombo; width: parent.width; label: "Vehicle"; options: root.carOptions() }
-        AppComboBox { id: customerCombo; width: parent.width; label: "Customer"; options: root.customerOptions() }
+        AppComboBox { id: carCombo; width: parent.width; label: qsTr("Vehicle"); options: root.carOptions() }
+        AppComboBox { id: customerCombo; width: parent.width; label: qsTr("Customer"); options: root.customerOptions() }
         AppComboBox {
             id: employeeCombo
             width: parent.width
-            label: "Sold By"
+            label: qsTr("Sold By")
             options: root.employeeOptions()
             currentValue: AppController.currentEmployeeId
         }
-        AppTextField { id: priceField; width: parent.width; label: "Sale Price ($)"; placeholder: "25000" }
+        AppTextField { id: priceField; width: parent.width; label: qsTr("Sale Price ($)"); placeholder: "25000" }
     }
 
     Component.onCompleted: refresh()

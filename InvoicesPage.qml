@@ -32,19 +32,19 @@ Item {
         for (var i = 0; i < customersData.length; i++) {
             if (customersData[i].id === sale.customerId) return customersData[i].firstName + " " + customersData[i].lastName
         }
-        return "Customer #" + sale.customerId
+        return qsTr("Customer #%1").arg(sale.customerId)
     }
     function saleOptions() {
         var opts = []
         for (var i = 0; i < salesData.length; i++) {
-            opts.push({ text: "Sale #" + salesData[i].id + " — $" + salesData[i].salePrice.toLocaleString(), value: salesData[i].id })
+            opts.push({ text: qsTr("Sale #%1 — $%2").arg(salesData[i].id).arg(salesData[i].salePrice.toLocaleString()), value: salesData[i].id })
         }
         return opts
     }
 
     readonly property var paymentOptions: [
-        { text: "Cash", value: 0 }, { text: "CreditCard", value: 1 },
-        { text: "BankTransfer", value: 2 }, { text: "Financing", value: 3 }
+        { text: qsTr("Cash"), value: 0 }, { text: qsTr("CreditCard"), value: 1 },
+        { text: qsTr("BankTransfer"), value: 2 }, { text: qsTr("Financing"), value: 3 }
     ]
 
     ColumnLayout {
@@ -56,7 +56,7 @@ Item {
             Layout.fillWidth: true
 
             Text {
-                text: root.invoicesData.length + " invoice(s) visible to you"
+                text: qsTr("%n invoice(s) visible to you", "", root.invoicesData.length)
                 color: Theme.textMuted
                 font.pixelSize: Theme.fontBody
                 Layout.fillWidth: true
@@ -70,7 +70,7 @@ Item {
             }
 
             PrimaryButton {
-                text: "+ New Invoice"
+                text: qsTr("+ New Invoice")
                 onClicked: {
                     addDialog.errorText = ""
                     addDialog.open()
@@ -89,7 +89,7 @@ Item {
 
             Text {
                 anchors.centerIn: parent
-                text: "No invoices yet."
+                text: qsTr("No invoices yet.")
                 color: Theme.textMuted
                 font.pixelSize: Theme.fontBody
                 visible: root.invoicesData.length === 0
@@ -105,10 +105,10 @@ Item {
                     Layout.preferredHeight: 44
                     Layout.margins: Theme.spacingMedium
 
-                    Text { text: "Invoice #"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 140 }
-                    Text { text: "Customer"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 180 }
-                    Text { text: "Payment"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 130 }
-                    Text { text: "Total"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.fillWidth: true }
+                    Text { text: qsTr("Invoice #"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 140 }
+                    Text { text: qsTr("Customer"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 180 }
+                    Text { text: qsTr("Payment"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 130 }
+                    Text { text: qsTr("Total"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.fillWidth: true }
                     Item { Layout.preferredWidth: 90 }
                 }
 
@@ -146,11 +146,11 @@ Item {
                                 Text { text: "$" + modelData.total.toLocaleString(); color: Theme.success; font.pixelSize: Theme.fontBody; font.weight: Font.DemiBold; Layout.fillWidth: true }
 
                                 GhostButton {
-                                    text: "🖨 Print"
+                                    text: qsTr("🖨 Print")
                                     onClicked: {
-                                        root.printStatus = "Rendering PDF…"
+                                        root.printStatus = qsTr("Rendering PDF…")
                                         var ok = AppController.printInvoice(modelData.id)
-                                        root.printStatus = ok ? "Opened invoice PDF." : "PDF saved — open it from your file manager."
+                                        root.printStatus = ok ? qsTr("Opened invoice PDF.") : qsTr("PDF saved — open it from your file manager.")
                                         printStatusTimer.restart()
                                     }
                                 }
@@ -170,8 +170,8 @@ Item {
 
     AppDialog {
         id: addDialog
-        title: "New Invoice"
-        confirmText: "Create Invoice"
+        title: qsTr("New Invoice")
+        confirmText: qsTr("Create Invoice")
 
         confirmEnabled: saleCombo.currentValue !== undefined
                          && invoiceNumberField.text.trim().length > 0
@@ -199,20 +199,20 @@ Item {
                 invoiceNumberField.text = ""; subtotalField.text = ""; taxField.text = ""; totalField.text = ""
                 root.refresh()
             } else {
-                errorText = AppController.lastInvoiceError() || "Could not create this invoice."
+                errorText = AppController.lastInvoiceError() || qsTr("Could not create this invoice.")
             }
         }
 
-        AppComboBox { id: saleCombo; width: parent.width; label: "Sale"; options: root.saleOptions() }
-        AppTextField { id: invoiceNumberField; width: parent.width; label: "Invoice Number"; placeholder: "INV-0001" }
+        AppComboBox { id: saleCombo; width: parent.width; label: qsTr("Sale"); options: root.saleOptions() }
+        AppTextField { id: invoiceNumberField; width: parent.width; label: qsTr("Invoice Number"); placeholder: "INV-0001" }
         RowLayout {
             width: parent.width
             spacing: Theme.spacingMedium
-            AppTextField { id: subtotalField; Layout.fillWidth: true; label: "Subtotal ($)"; placeholder: "25000" }
-            AppTextField { id: taxField; Layout.fillWidth: true; label: "Tax ($)"; placeholder: "1500" }
+            AppTextField { id: subtotalField; Layout.fillWidth: true; label: qsTr("Subtotal ($)"); placeholder: "25000" }
+            AppTextField { id: taxField; Layout.fillWidth: true; label: qsTr("Tax ($)"); placeholder: "1500" }
         }
-        AppTextField { id: totalField; width: parent.width; label: "Total ($)"; placeholder: "26500" }
-        AppComboBox { id: paymentCombo; width: parent.width; label: "Payment Method"; options: root.paymentOptions; currentValue: 0 }
+        AppTextField { id: totalField; width: parent.width; label: qsTr("Total ($)"); placeholder: "26500" }
+        AppComboBox { id: paymentCombo; width: parent.width; label: qsTr("Payment Method"); options: root.paymentOptions; currentValue: 0 }
     }
 
     Component.onCompleted: refresh()

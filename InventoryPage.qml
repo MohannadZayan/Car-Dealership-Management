@@ -14,12 +14,12 @@ Item {
     }
 
     readonly property var bodyTypeOptions: [
-        { text: "Sedan", value: 0 }, { text: "SUV", value: 1 }, { text: "Coupe", value: 2 },
-        { text: "Hatchback", value: 3 }, { text: "Convertible", value: 4 }, { text: "Pickup", value: 5 },
-        { text: "Wagon", value: 6 }, { text: "Van", value: 7 }
+        { text: qsTr("Sedan"), value: 0 }, { text: qsTr("SUV"), value: 1 }, { text: qsTr("Coupe"), value: 2 },
+        { text: qsTr("Hatchback"), value: 3 }, { text: qsTr("Convertible"), value: 4 }, { text: qsTr("Pickup"), value: 5 },
+        { text: qsTr("Wagon"), value: 6 }, { text: qsTr("Van"), value: 7 }
     ]
     readonly property var transmissionOptions: [
-        { text: "Manual", value: 0 }, { text: "Automatic", value: 1 }
+        { text: qsTr("Manual"), value: 0 }, { text: qsTr("Automatic"), value: 1 }
     ]
 
     function statusTone(status) {
@@ -35,14 +35,14 @@ Item {
             Layout.fillWidth: true
 
             Text {
-                text: root.carsData.length + " vehicle(s) in stock"
+                text: qsTr("%n vehicle(s) in stock", "", root.carsData.length)
                 color: Theme.textMuted
                 font.pixelSize: Theme.fontBody
                 Layout.fillWidth: true
             }
 
             PrimaryButton {
-                text: "+ Add Car"
+                text: qsTr("+ Add Car")
                 onClicked: {
                     addDialog.errorText = ""
                     addDialog.open()
@@ -68,11 +68,11 @@ Item {
                     Layout.preferredHeight: 44
                     Layout.margins: Theme.spacingMedium
 
-                    Text { text: "Vehicle"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 220 }
-                    Text { text: "Price"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 110 }
-                    Text { text: "Mileage"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 100 }
-                    Text { text: "Body"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 110 }
-                    Text { text: "Status"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 110 }
+                    Text { text: qsTr("Vehicle"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 220 }
+                    Text { text: qsTr("Price"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 110 }
+                    Text { text: qsTr("Mileage"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 100 }
+                    Text { text: qsTr("Body"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 110 }
+                    Text { text: qsTr("Status"); color: Theme.textMuted; font.pixelSize: Theme.fontSmall; Layout.preferredWidth: 110 }
                     Item { Layout.fillWidth: true }
                     Text { text: ""; Layout.preferredWidth: 80 }
                 }
@@ -111,7 +111,7 @@ Item {
                                     Text { text: modelData.year + " · " + modelData.vin; color: Theme.textMuted; font.pixelSize: Theme.fontTiny }
                                 }
                                 Text { text: "$" + modelData.price.toLocaleString(); color: Theme.textPrimary; font.pixelSize: Theme.fontBody; Layout.preferredWidth: 110 }
-                                Text { text: modelData.mileage.toLocaleString() + " mi"; color: Theme.textPrimary; font.pixelSize: Theme.fontBody; Layout.preferredWidth: 100 }
+                                Text { text: qsTr("%1 mi").arg(modelData.mileage.toLocaleString()); color: Theme.textPrimary; font.pixelSize: Theme.fontBody; Layout.preferredWidth: 100 }
                                 Text { text: modelData.bodyTypeName; color: Theme.textPrimary; font.pixelSize: Theme.fontBody; Layout.preferredWidth: 110 }
 
                                 Item {
@@ -127,7 +127,7 @@ Item {
                                 Item { Layout.fillWidth: true }
 
                                 GhostButton {
-                                    text: "Delete"
+                                    text: qsTr("Delete")
                                     tint: Theme.danger
                                     onClicked: {
                                         deleteConfirm.targetId = modelData.id
@@ -146,8 +146,8 @@ Item {
     // --- Add Car dialog ---
     AppDialog {
         id: addDialog
-        title: "Add Car"
-        confirmText: "Add Vehicle"
+        title: qsTr("Add Car")
+        confirmText: qsTr("Add Vehicle")
 
         confirmEnabled: makeField.text.trim().length > 0
                          && modelField.text.trim().length > 0
@@ -178,40 +178,40 @@ Item {
                 engineField.text = ""; horsepowerField.text = ""; vinField.text = ""
                 root.refresh()
             } else {
-                errorText = AppController.lastCarError() || "Could not add this vehicle. Check the VIN is unique."
+                errorText = AppController.lastCarError() || qsTr("Could not add this vehicle. Check the VIN is unique.")
             }
         }
 
         RowLayout {
             width: parent.width
             spacing: Theme.spacingMedium
-            AppTextField { id: makeField; Layout.fillWidth: true; label: "Make"; placeholder: "Toyota" }
-            AppTextField { id: modelField; Layout.fillWidth: true; label: "Model"; placeholder: "Camry" }
+            AppTextField { id: makeField; Layout.fillWidth: true; label: qsTr("Make"); placeholder: qsTr("Toyota") }
+            AppTextField { id: modelField; Layout.fillWidth: true; label: qsTr("Model"); placeholder: qsTr("Camry") }
         }
         RowLayout {
             width: parent.width
             spacing: Theme.spacingMedium
-            AppTextField { id: yearField; Layout.fillWidth: true; label: "Year"; placeholder: "2024" }
-            AppTextField { id: priceField; Layout.fillWidth: true; label: "Price ($)"; placeholder: "25000" }
+            AppTextField { id: yearField; Layout.fillWidth: true; label: qsTr("Year"); placeholder: "2024" }
+            AppTextField { id: priceField; Layout.fillWidth: true; label: qsTr("Price ($)"); placeholder: "25000" }
         }
         RowLayout {
             width: parent.width
             spacing: Theme.spacingMedium
-            AppTextField { id: mileageField; Layout.fillWidth: true; label: "Mileage"; placeholder: "0" }
-            AppTextField { id: colorField; Layout.fillWidth: true; label: "Color"; placeholder: "Black" }
+            AppTextField { id: mileageField; Layout.fillWidth: true; label: qsTr("Mileage"); placeholder: "0" }
+            AppTextField { id: colorField; Layout.fillWidth: true; label: qsTr("Color"); placeholder: qsTr("Black") }
         }
         RowLayout {
             width: parent.width
             spacing: Theme.spacingMedium
-            AppTextField { id: engineField; Layout.fillWidth: true; label: "Engine"; placeholder: "2.5L I4" }
-            AppTextField { id: horsepowerField; Layout.fillWidth: true; label: "Horsepower"; placeholder: "200" }
+            AppTextField { id: engineField; Layout.fillWidth: true; label: qsTr("Engine"); placeholder: "2.5L I4" }
+            AppTextField { id: horsepowerField; Layout.fillWidth: true; label: qsTr("Horsepower"); placeholder: "200" }
         }
-        AppTextField { id: vinField; width: parent.width; label: "VIN"; placeholder: "Unique vehicle identifier" }
+        AppTextField { id: vinField; width: parent.width; label: qsTr("VIN"); placeholder: qsTr("Unique vehicle identifier") }
         RowLayout {
             width: parent.width
             spacing: Theme.spacingMedium
-            AppComboBox { id: bodyTypeCombo; Layout.fillWidth: true; label: "Body Type"; options: root.bodyTypeOptions; currentValue: 0 }
-            AppComboBox { id: transmissionCombo; Layout.fillWidth: true; label: "Transmission"; options: root.transmissionOptions; currentValue: 1 }
+            AppComboBox { id: bodyTypeCombo; Layout.fillWidth: true; label: qsTr("Body Type"); options: root.bodyTypeOptions; currentValue: 0 }
+            AppComboBox { id: transmissionCombo; Layout.fillWidth: true; label: qsTr("Transmission"); options: root.transmissionOptions; currentValue: 1 }
         }
         RowLayout {
             width: parent.width
@@ -219,7 +219,7 @@ Item {
             Controls.CheckBox {
                 id: newSwitch
                 checked: true
-                text: "This is a brand-new vehicle"
+                text: qsTr("This is a brand-new vehicle")
                 contentItem: Text {
                     text: newSwitch.text
                     color: Theme.textPrimary
@@ -234,8 +234,8 @@ Item {
     // --- Delete confirmation ---
     AppDialog {
         id: deleteConfirm
-        title: "Remove Vehicle"
-        confirmText: "Delete"
+        title: qsTr("Remove Vehicle")
+        confirmText: qsTr("Delete")
         property int targetId: -1
         property string targetLabel: ""
 
@@ -247,7 +247,7 @@ Item {
                 close()
                 root.refresh()
             } else {
-                errorText = AppController.lastCarError() || "Could not delete this vehicle."
+                errorText = AppController.lastCarError() || qsTr("Could not delete this vehicle.")
             }
         }
 
@@ -256,7 +256,7 @@ Item {
             wrapMode: Text.WordWrap
             color: Theme.textPrimary
             font.pixelSize: Theme.fontBody
-            text: "Remove " + deleteConfirm.targetLabel + " from inventory? This cannot be undone."
+            text: qsTr("Remove %1 from inventory? This cannot be undone.").arg(deleteConfirm.targetLabel)
         }
     }
 

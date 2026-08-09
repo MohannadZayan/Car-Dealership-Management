@@ -14,13 +14,13 @@ Rectangle {
 
     readonly property var pageIds: ["dashboard", "inventory", "customers", "employees", "sales", "invoices", "settings"]
     readonly property var pageTitles: ({
-        "dashboard": "Dashboard",
-        "inventory": "Inventory",
-        "customers": "Customers",
-        "employees": "Employees",
-        "sales": "Sales",
-        "invoices": "Invoices",
-        "settings": "Settings"
+        "dashboard": qsTr("Dashboard"),
+        "inventory": qsTr("Inventory"),
+        "customers": qsTr("Customers"),
+        "employees": qsTr("Employees"),
+        "sales": qsTr("Sales"),
+        "invoices": qsTr("Invoices"),
+        "settings": qsTr("Settings")
     })
 
     property string currentPage: "dashboard"
