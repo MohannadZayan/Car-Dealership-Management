@@ -143,36 +143,22 @@ Item {
                 anchors.fill: parent
                 anchors.margins: Theme.spacingLarge
 
-                Column {
+                Text {
                     Layout.fillWidth: true
-                    spacing: 2
-                    Text { text: qsTr("Language"); color: Theme.textPrimary; font.pixelSize: Theme.fontBody; font.weight: Font.DemiBold }
-                    Text { text: AppController.currentLanguage === "ar" ? "العربية" : "English"; color: Theme.textMuted; font.pixelSize: Theme.fontSmall }
+                    text: qsTr("Language")
+                    color: Theme.textPrimary
+                    font.pixelSize: Theme.fontBody
+                    font.weight: Font.DemiBold
                 }
 
-                Rectangle {
-                    id: languageTrack
-                    width: 52
-                    height: 28
-                    radius: 14
-                    color: AppController.currentLanguage === "ar" ? Theme.accent : Theme.border
-                    Behavior on color { ColorAnimation { duration: Theme.animMedium } }
-
-                    Rectangle {
-                        width: 22
-                        height: 22
-                        radius: 11
-                        color: "#FFFFFF"
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: AppController.currentLanguage === "ar" ? parent.width - width - 3 : 3
-                        Behavior on x { NumberAnimation { duration: Theme.animMedium; easing.type: Easing.OutBack } }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: AppController.setLanguage(AppController.currentLanguage === "ar" ? "en" : "ar")
-                    }
+                AppComboBox {
+                    width: 200
+                    options: [
+                        { text: "English", value: "en" },
+                        { text: "العربية", value: "ar" }
+                    ]
+                    currentValue: AppController.currentLanguage
+                    onCurrentValueChanged: AppController.setLanguage(currentValue)
                 }
             }
         }
