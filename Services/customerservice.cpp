@@ -173,6 +173,14 @@ bool CustomerService::removeCustomer(int id)
 
         if (!m_databaseManager->executeQuery(query))
         {
+            // A customer with a recorded sale is still referenced by
+            // VehicleSales.customer_id, so the foreign key blocks the delete —
+            // that's expected, not a real failure, and deserves a message that
+            // says so instead of a generic one.
+            if (query.lastError().text().contains("FOREIGN KEY constraint failed", Qt::CaseInsensitive))
+            {
+                m_lastError = ServiceError::Referenced;
+            }
             return false;
         }
 

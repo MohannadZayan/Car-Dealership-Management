@@ -23,6 +23,10 @@ Controls.Popup {
     modal: true
     focus: true
     closePolicy: Controls.Popup.CloseOnEscape | Controls.Popup.CloseOnPressOutside
+
+    // A leftover error from a previous attempt shouldn't still be showing the
+    // next time this dialog opens for an unrelated record.
+    onOpened: errorText = ""
     anchors.centerIn: Controls.Overlay.overlay
     width: 460
     padding: 0

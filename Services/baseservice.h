@@ -18,7 +18,8 @@ enum class ServiceError
     NotFound,         //? The targeted row (by id) doesn't exist.
     ValidationFailed, //? Constructing/validating the entity threw (e.g. bad DB row data).
     DatabaseError,    //? The query itself failed (bad SQL, constraint violation, etc.).
-    DuplicateEmail    //? Another record already uses that email address.
+    DuplicateEmail,   //? Another record already uses that email address.
+    Referenced        //? Blocked by a foreign key — another record (e.g. a sale) still points at this row.
 };
 
 // * Shared cache + lookup/filter logic for every *Service class.
@@ -68,6 +69,8 @@ public:
             return "The database operation failed.";
         case ServiceError::DuplicateEmail:
             return "That email address is already in use.";
+        case ServiceError::Referenced:
+            return "This record still has other data pointing at it (e.g. a recorded sale) and can't be deleted.";
         }
 
         return QString();
