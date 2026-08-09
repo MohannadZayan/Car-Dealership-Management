@@ -52,6 +52,9 @@ qt_add_qml_module(appCar_Dealership_Management
         InvoicesPage.qml
         SettingsPage.qml
 
+    RESOURCES
+        Assets/login-background.jpg
+
     SOURCES
         Database/databasemanager.h
         Database/databasemanager.cpp
