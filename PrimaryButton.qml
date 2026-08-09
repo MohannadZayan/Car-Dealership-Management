@@ -11,6 +11,7 @@ Rectangle {
     property color baseColor: Theme.accent
     property color hoverColor: Theme.accentHover
     property color pressedColor: Theme.accentPressed
+    property int fontSize: Theme.fontBody
 
     signal clicked()
 
@@ -37,7 +38,7 @@ Rectangle {
             id: label
             text: root.busy ? "Please wait…" : root.text
             color: root.enabled ? "#FFFFFF" : Theme.textMuted
-            font.pixelSize: Theme.fontBody
+            font.pixelSize: root.fontSize
             font.weight: Font.DemiBold
         }
     }

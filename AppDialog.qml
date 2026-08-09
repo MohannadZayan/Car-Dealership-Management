@@ -68,14 +68,22 @@ Controls.Popup {
         Rectangle { width: parent.width; height: 1; color: Theme.border }
 
         Controls.ScrollView {
+            id: scrollView
             width: parent.width
             height: Math.min(bodyColumn.implicitHeight + Theme.spacingLarge * 2, 420)
             clip: true
+            Controls.ScrollBar.horizontal.policy: Controls.ScrollBar.AlwaysOff
 
+            // bodyColumn's *actual* parent at runtime is ScrollView's internal
+            // Flickable, not ScrollView itself — "parent.width" there doesn't
+            // propagate a usable value (every field ends up width 0, stacked on
+            // top of each other). availableWidth is ScrollView's own geometry
+            // (width minus padding/scrollbar), computed independent of that
+            // reparenting, so it's the robust way to size scrollable content.
             Column {
                 id: bodyColumn
                 x: Theme.spacingLarge
-                width: parent.width - Theme.spacingLarge * 2
+                width: scrollView.availableWidth - Theme.spacingLarge * 2
                 topPadding: Theme.spacingLarge
                 bottomPadding: Theme.spacingLarge
                 spacing: Theme.spacingMedium

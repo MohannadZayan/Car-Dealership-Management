@@ -3,7 +3,13 @@ import QtQuick.Controls.Basic as Controls
 import Car_Dealership_Management
 
 // * Styled single-line input with a floating label above it, matching the dark theme.
-Column {
+// ! Root is a plain Item (not Column) specifically so implicitWidth is assignable —
+// ! Column computes implicitWidth itself (read-only), and since the input Rectangle
+// ! below binds its own width back to this item's width, Column would otherwise
+// ! size the whole field off just the label text's width alone, which differs
+// ! between e.g. "First Name" and "Last Name" and throws off even 50/50 splits
+// ! in a RowLayout of same-row fields with Layout.fillWidth.
+Item {
     id: root
 
     property alias text: input.text
@@ -16,18 +22,32 @@ Column {
     property bool isPassword: false
     property bool error: false
 
-    spacing: Theme.spacingTiny
+    // Overridable so a page (e.g. a bigger login form) can size up without
+    // affecting every other page's default fields.
+    property int fieldHeight: 46
+    property int labelSize: Theme.fontSmall
+    property int inputSize: Theme.fontBody
+    property int iconSize: Theme.fontBody
+
+    implicitWidth: 120
+    implicitHeight: (labelText.visible ? labelText.implicitHeight + Theme.spacingTiny : 0) + fieldHeight
 
     Text {
+        id: labelText
         text: root.label
         color: Theme.textMuted
-        font.pixelSize: Theme.fontSmall
+        font.pixelSize: root.labelSize
         visible: root.label.length > 0
+        anchors.top: parent.top
+        anchors.left: parent.left
     }
 
     Rectangle {
-        width: parent.width
-        height: 46
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: labelText.visible ? labelText.bottom : parent.top
+        anchors.topMargin: labelText.visible ? Theme.spacingTiny : 0
+        height: root.fieldHeight
         radius: Theme.radiusSmall
         color: Theme.surface
         border.width: 1
@@ -40,7 +60,7 @@ Column {
             visible: root.icon.length > 0
             text: root.icon
             color: input.activeFocus ? Theme.accent : Theme.textMuted
-            font.pixelSize: Theme.fontBody
+            font.pixelSize: root.iconSize
             anchors.left: parent.left
             anchors.leftMargin: 14
             anchors.verticalCenter: parent.verticalCenter
@@ -59,7 +79,7 @@ Column {
             placeholderTextColor: Theme.textMuted
             echoMode: root.isPassword ? TextInput.Password : TextInput.Normal
             selectByMouse: true
-            font.pixelSize: Theme.fontBody
+            font.pixelSize: root.inputSize
             background: Item {}
         }
     }

@@ -2,8 +2,11 @@ import QtQuick
 import QtQuick.Layouts
 import Car_Dealership_Management
 
-// * Full-screen login: a gradient branding panel on the left (hides on narrow
-// * windows), the actual form on the right. On success emits loggedIn().
+// * Full-screen login: a showroom photo fills the whole page (one layer below
+// * everything else), with a dark overlay — heavier on the form side — so text
+// * stays readable regardless of the photo's own brightness. Falls back to the
+// * plain gradient/solid background if Assets/login-background.jpg isn't present.
+// * On success emits loggedIn().
 Rectangle {
     id: root
 
@@ -39,6 +42,31 @@ Rectangle {
         }
     }
 
+    // ============================ Background photo ============================
+    Image {
+        id: backgroundImage
+        anchors.fill: parent
+        source: "Assets/login-background.jpg"
+        fillMode: Image.PreserveAspectCrop
+        asynchronous: true
+        visible: status === Image.Ready
+        cache: true
+    }
+
+    // Dark overlay: heavier toward the right (form side) than the left (branding
+    // side), so the photo stays visible as texture but every bit of text —
+    // regardless of how bright the photo is underneath it — stays readable.
+    Rectangle {
+        anchors.fill: parent
+        visible: backgroundImage.visible
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0.0; color: Qt.rgba(0.02, 0.02, 0.05, 0.55) }
+            GradientStop { position: 0.55; color: Qt.rgba(0.02, 0.02, 0.05, 0.78) }
+            GradientStop { position: 1.0; color: Qt.rgba(0.02, 0.02, 0.05, 0.92) }
+        }
+    }
+
     RowLayout {
         anchors.fill: parent
         spacing: 0
@@ -46,23 +74,30 @@ Rectangle {
         // ============================= Branding panel =============================
         Rectangle {
             id: brandingPanel
-            Layout.preferredWidth: 460
+            Layout.preferredWidth: 560
             Layout.fillHeight: true
-            visible: root.width > 860
+            visible: root.width > 980
             clip: true
+            color: "transparent"
 
-            gradient: Gradient {
-                orientation: Gradient.Vertical
-                GradientStop { position: 0.0; color: Qt.darker(Theme.accent, 1.35) }
-                GradientStop { position: 1.0; color: Qt.darker(Theme.accent, 2.1) }
+            // Solid gradient fallback — only drawn when there's no photo behind it.
+            Rectangle {
+                anchors.fill: parent
+                visible: !backgroundImage.visible
+                gradient: Gradient {
+                    orientation: Gradient.Vertical
+                    GradientStop { position: 0.0; color: Qt.darker(Theme.accent, 1.35) }
+                    GradientStop { position: 1.0; color: Qt.darker(Theme.accent, 2.1) }
+                }
             }
 
-            // Slowly drifting decorative circles — purely cosmetic.
+            // Slowly drifting decorative circles — purely cosmetic, toned down
+            // further when the photo is doing most of the visual work.
             Repeater {
                 model: [
-                    { size: 260, x: -80, y: 60, opacity: 0.10 },
-                    { size: 160, x: 300, y: 420, opacity: 0.14 },
-                    { size: 340, x: 120, y: 560, opacity: 0.08 }
+                    { size: 300, x: -90, y: 60, opacity: 0.09 },
+                    { size: 190, x: 360, y: 460, opacity: 0.12 },
+                    { size: 400, x: 140, y: 620, opacity: 0.07 }
                 ]
 
                 delegate: Rectangle {
@@ -70,14 +105,14 @@ Rectangle {
                     height: modelData.size
                     radius: width / 2
                     color: "#FFFFFF"
-                    opacity: modelData.opacity
+                    opacity: backgroundImage.visible ? modelData.opacity * 0.6 : modelData.opacity
                     x: modelData.x
                     y: modelData.y
 
                     SequentialAnimation on y {
                         loops: Animation.Infinite
-                        NumberAnimation { to: modelData.y - 22; duration: 3200 + index * 700; easing.type: Easing.InOutSine }
-                        NumberAnimation { to: modelData.y + 22; duration: 3200 + index * 700; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: modelData.y - 24; duration: 3200 + index * 700; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: modelData.y + 24; duration: 3200 + index * 700; easing.type: Easing.InOutSine }
                     }
                 }
             }
@@ -86,30 +121,30 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: Theme.spacingXLarge
+                anchors.margins: Theme.spacingXLarge * 1.3
                 spacing: Theme.spacingLarge
 
-                Text { text: "🚗"; font.pixelSize: 46 }
+                Text { text: "🚗"; font.pixelSize: 58 }
 
                 Text {
                     text: "Dealership\nManagement"
                     color: "#FFFFFF"
-                    font.pixelSize: 30
+                    font.pixelSize: 42
                     font.weight: Font.Bold
                     lineHeight: 1.15
                 }
 
                 Text {
                     text: "Everything your dealership runs on — inventory, customers, sales, and invoices — in one place."
-                    color: Qt.rgba(1, 1, 1, 0.82)
-                    font.pixelSize: Theme.fontBody
+                    color: Qt.rgba(1, 1, 1, 0.85)
+                    font.pixelSize: 17
                     wrapMode: Text.WordWrap
-                    Layout.preferredWidth: 340
+                    Layout.preferredWidth: 400
                     Layout.topMargin: 4
                 }
 
                 ColumnLayout {
-                    spacing: Theme.spacingSmall
+                    spacing: Theme.spacingMedium
                     Layout.topMargin: Theme.spacingMedium
 
                     Repeater {
@@ -120,9 +155,9 @@ Rectangle {
                         ]
 
                         delegate: RowLayout {
-                            spacing: 10
-                            Text { text: modelData.icon; font.pixelSize: 16 }
-                            Text { text: modelData.label; color: Qt.rgba(1, 1, 1, 0.9); font.pixelSize: Theme.fontSmall }
+                            spacing: 12
+                            Text { text: modelData.icon; font.pixelSize: 20 }
+                            Text { text: modelData.label; color: Qt.rgba(1, 1, 1, 0.92); font.pixelSize: 15 }
                         }
                     }
                 }
@@ -133,8 +168,8 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 anchors.margins: Theme.spacingXLarge
                 text: "© " + new Date().getFullYear() + " Dealership Management"
-                color: Qt.rgba(1, 1, 1, 0.55)
-                font.pixelSize: Theme.fontTiny
+                color: Qt.rgba(1, 1, 1, 0.6)
+                font.pixelSize: Theme.fontSmall
             }
         }
 
@@ -145,9 +180,9 @@ Rectangle {
 
             Column {
                 id: formColumn
-                width: Math.min(360, parent.width - Theme.spacingXLarge * 2)
+                width: Math.min(440, parent.width - Theme.spacingXLarge * 2)
                 anchors.centerIn: parent
-                spacing: Theme.spacingMedium
+                spacing: Theme.spacingLarge
 
                 opacity: 0
                 scale: 0.97
@@ -157,31 +192,34 @@ Rectangle {
 
                 Text {
                     text: "🚗"
-                    font.pixelSize: 28
+                    font.pixelSize: 36
                     visible: !brandingPanel.visible
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
                 Text {
                     text: "Welcome back"
-                    color: Theme.textPrimary
-                    font.pixelSize: 26
+                    color: backgroundImage.visible ? "#FFFFFF" : Theme.textPrimary
+                    font.pixelSize: 34
                     font.weight: Font.Bold
                 }
 
                 Text {
                     text: "Sign in to your dealership account"
-                    color: Theme.textMuted
-                    font.pixelSize: Theme.fontBody
+                    color: backgroundImage.visible ? Qt.rgba(1, 1, 1, 0.75) : Theme.textMuted
+                    font.pixelSize: 17
                     bottomPadding: Theme.spacingMedium
                 }
 
-                Item { id: shakeAnchor; width: parent.width; height: shakeColumn.implicitHeight
+                Item {
+                    id: shakeAnchor
+                    width: parent.width
+                    height: shakeColumn.implicitHeight
 
                     Column {
                         id: shakeColumn
                         width: parent.width
-                        spacing: Theme.spacingMedium
+                        spacing: Theme.spacingLarge
                         x: 0
 
                         // Nudges x directly — this Item isn't anchor-positioned by its
@@ -201,6 +239,10 @@ Rectangle {
                             icon: "✉"
                             placeholder: "you@dealership.com"
                             error: root.errorText.length > 0
+                            fieldHeight: 56
+                            labelSize: 14
+                            inputSize: 16
+                            iconSize: 16
                             inputField.onAccepted: passwordField.inputField.forceActiveFocus()
                         }
 
@@ -212,13 +254,17 @@ Rectangle {
                             placeholder: "••••••••"
                             isPassword: true
                             error: root.errorText.length > 0
+                            fieldHeight: 56
+                            labelSize: 14
+                            inputSize: 16
+                            iconSize: 16
                             inputField.onAccepted: root.attemptLogin()
                         }
 
                         Text {
                             text: root.errorText
                             color: Theme.danger
-                            font.pixelSize: Theme.fontSmall
+                            font.pixelSize: Theme.fontBody
                             visible: root.errorText.length > 0
                             width: parent.width
                             wrapMode: Text.WordWrap
@@ -226,8 +272,10 @@ Rectangle {
 
                         PrimaryButton {
                             width: parent.width
+                            height: 56
                             text: "Log In"
                             busy: root.busy
+                            fontSize: 17
                             onClicked: root.attemptLogin()
                         }
                     }
@@ -235,8 +283,8 @@ Rectangle {
 
                 Text {
                     text: "Contact your manager if you don't have an account yet."
-                    color: Theme.textMuted
-                    font.pixelSize: Theme.fontTiny
+                    color: backgroundImage.visible ? Qt.rgba(1, 1, 1, 0.65) : Theme.textMuted
+                    font.pixelSize: 13
                     topPadding: Theme.spacingSmall
                 }
             }
