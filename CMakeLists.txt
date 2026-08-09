@@ -158,6 +158,18 @@ qt_add_resources(appCar_Dealership_Management "translations"
     FILES ${qm_files}
 )
 
+# --- Seed database ---
+#
+# Ships a snapshot of the working dealership.db (inventory, employees, etc.)
+# inside the binary so a fresh install isn't an empty database. DatabaseManager
+# copies it to the real AppDataLocation path on first run only — an existing
+# database there is never touched.
+qt_add_resources(appCar_Dealership_Management "seed_database"
+    PREFIX "/seed"
+    BASE "Database/seed"
+    FILES Database/seed/dealership.db
+)
+
 install(TARGETS appCar_Dealership_Management
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QFile>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QStandardPaths>
@@ -23,7 +24,20 @@ bool DatabaseManager::connectDatabase()
     const QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir().mkpath(dataDir);
 
-    m_database.setDatabaseName(dataDir + QDir::separator() + "dealership.db");
+    const QString dbPath = dataDir + QDir::separator() + "dealership.db";
+
+    // First run on this machine: seed from the snapshot shipped inside the
+    // binary so the app isn't empty out of the box. Never overwrites an
+    // existing database.
+    if (!QFile::exists(dbPath) && QFile::exists(":/seed/dealership.db"))
+    {
+        if (QFile::copy(":/seed/dealership.db", dbPath))
+            QFile::setPermissions(dbPath, QFile::ReadOwner | QFile::WriteOwner);
+        else
+            qDebug() << "Failed to seed database from bundled snapshot.";
+    }
+
+    m_database.setDatabaseName(dbPath);
 
     // Open the database connection
     if (!m_database.open())
