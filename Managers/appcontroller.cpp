@@ -657,7 +657,28 @@ bool AppController::addSale(const QVariantMap& data)
             data.value("saleDate").toDate()
         );
 
-        return m_saleService.addSale(sale);
+        if (!m_saleService.addSale(sale))
+        {
+            return false;
+        }
+
+        // A sold car is no longer available inventory — reflect that in its status.
+        // Not wrapped in a DB transaction with the insert above (this codebase
+        // doesn't use transactions for multi-step writes); if this update fails,
+        // the sale itself still stands, just with a stale car status, logged below.
+        Car* soldCar = m_carService.findCarById(sale.carId());
+        if (soldCar != nullptr)
+        {
+            soldCar->setStatus(CarStatus::Sold);
+
+            if (!m_carService.updateCar(*soldCar))
+            {
+                qWarning() << "AppController::addSale(): sale recorded but failed to mark car"
+                           << sale.carId() << "as sold:" << m_carService.lastErrorString();
+            }
+        }
+
+        return true;
     }
     catch (const std::exception& e)
     {
@@ -684,7 +705,24 @@ bool AppController::updateSale(const QVariantMap& data)
             data.value("saleDate").toDate()
         );
 
-        return m_saleService.updateSale(sale);
+        if (!m_saleService.updateSale(sale))
+        {
+            return false;
+        }
+
+        Car* soldCar = m_carService.findCarById(sale.carId());
+        if (soldCar != nullptr)
+        {
+            soldCar->setStatus(CarStatus::Sold);
+
+            if (!m_carService.updateCar(*soldCar))
+            {
+                qWarning() << "AppController::updateSale(): sale updated but failed to mark car"
+                           << sale.carId() << "as sold:" << m_carService.lastErrorString();
+            }
+        }
+
+        return true;
     }
     catch (const std::exception& e)
     {
@@ -695,7 +733,40 @@ bool AppController::updateSale(const QVariantMap& data)
 
 bool AppController::removeSale(int id)
 {
-    return requireLogin() && m_saleService.removeSale(id);
+    if (!requireLogin())
+    {
+        return false;
+    }
+
+    // Grab the car this sale pointed at *before* removing the sale — once it's
+    // gone, there's no way to look that up from the sale record anymore.
+    Sale* sale = m_saleService.findSaleById(id);
+    const int carId = sale != nullptr ? sale->carId() : -1;
+
+    if (!m_saleService.removeSale(id))
+    {
+        return false;
+    }
+
+    if (carId != -1)
+    {
+        Car* car = m_carService.findCarById(carId);
+
+        // Only revert if still marked Sold — if it's since been manually set to
+        // Reserved/InTransit for some other reason, don't clobber that.
+        if (car != nullptr && car->status() == CarStatus::Sold)
+        {
+            car->setStatus(CarStatus::Available);
+
+            if (!m_carService.updateCar(*car))
+            {
+                qWarning() << "AppController::removeSale(): sale removed but failed to revert car"
+                           << carId << "to available:" << m_carService.lastErrorString();
+            }
+        }
+    }
+
+    return true;
 }
 
 QString AppController::lastSaleError() const
