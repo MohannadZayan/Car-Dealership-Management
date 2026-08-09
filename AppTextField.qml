@@ -12,6 +12,7 @@ Column {
     property alias inputField: input
     property string label: ""
     property string placeholder: ""
+    property string icon: ""
     property bool isPassword: false
     property bool error: false
 
@@ -26,7 +27,7 @@ Column {
 
     Rectangle {
         width: parent.width
-        height: 44
+        height: 46
         radius: Theme.radiusSmall
         color: Theme.surface
         border.width: 1
@@ -34,10 +35,23 @@ Column {
 
         Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
 
+        Text {
+            id: iconText
+            visible: root.icon.length > 0
+            text: root.icon
+            color: input.activeFocus ? Theme.accent : Theme.textMuted
+            font.pixelSize: Theme.fontBody
+            anchors.left: parent.left
+            anchors.leftMargin: 14
+            anchors.verticalCenter: parent.verticalCenter
+            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+        }
+
         Controls.TextField {
             id: input
             anchors.fill: parent
-            leftPadding: 14
+            anchors.leftMargin: root.icon.length > 0 ? iconText.width + 24 : 0
+            leftPadding: root.icon.length > 0 ? 0 : 14
             rightPadding: 14
             verticalAlignment: TextInput.AlignVCenter
             color: Theme.textPrimary
